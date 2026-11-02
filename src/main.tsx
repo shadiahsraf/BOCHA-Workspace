@@ -1,7 +1,5 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-import '@fontsource/inter';
-import '@fontsource/ibm-plex-sans-arabic';
 import '@/styles/globals.css';
 import { App } from '@/app/App';
 

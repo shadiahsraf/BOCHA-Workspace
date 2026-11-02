@@ -1,0 +1,90 @@
+/* ==========================================================================
+   src/styles/tokens.css
+   LifeOS Design Tokens (Single Source of Truth: Canonical Space-Separated RGB)
+   ========================================================================== */
+
+/* Light Theme (:root) */
+:root {
+  /* Core Palette (Exact approved values) */
+  --color-background: 247 247 245;            /* #F7F7F5 */
+  --color-surface: 255 255 255;               /* #FFFFFF */
+  --color-surface-secondary: 240 240 237;     /* #F0F0ED */
+  --color-primary: 98 88 217;                 /* #6258D9 */
+  --color-primary-soft: 234 232 255;          /* #EAE8FF */
+  --color-text-primary: 32 33 39;             /* #202127 */
+  --color-text-secondary: 119 121 132;        /* #777984 (Original approved) */
+  --color-text-secondary-accessible: 103 105 116; /* #676974 (WCAG AA compliant variant) */
+  --color-border: 232 232 229;                /* #E8E8E5 */
+
+  /* Functional Semantic Pairs */
+  --color-success: 24 121 78;                 /* #18794E */
+  --color-success-soft: 230 247 237;          /* #E6F7ED */
+
+  --color-destructive: 206 44 49;              /* #CE2C31 */
+  --color-destructive-soft: 255 235 235;      /* #FFEBEB */
+
+  --color-warning: 158 86 0;                  /* #9E5600 */
+  --color-warning-soft: 255 244 229;          /* #FFF4E5 */
+
+  /* Elevation Shadows (Restrained & Minimal) */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.09), 0 8px 10px -6px rgb(0 0 0 / 0.04);
+
+  /* Border Radiuses */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-full: 9999px;
+
+  /* Transitions & Animation Physics */
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --ease-default: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Z-Index Hierarchy */
+  --z-base: 0;
+  --z-sticky: 10;
+  --z-header: 20;
+  --z-sidebar: 30;
+  --z-popover: 40;
+  --z-modal: 50;
+  --z-toast: 60;
+}
+
+/* Dark Theme (.dark) */
+.dark {
+  /* Core Palette (Exact approved values) */
+  --color-background: 20 22 25;               /* #141619 */
+  --color-surface: 29 32 36;                  /* #1D2024 */
+  --color-surface-secondary: 34 38 43;        /* #22262B */
+  --color-primary: 148 139 255;               /* #948BFF */
+  --color-primary-soft: 48 45 77;             /* #302D4D */
+  --color-text-primary: 241 241 243;          /* #F1F1F3 */
+  --color-text-secondary: 163 166 176;        /* #A3A6B0 (Original approved) */
+  --color-text-secondary-accessible: 163 166 176; /* Dark theme original already exceeds AA */
+  --color-border: 48 52 58;                   /* #30343A */
+
+  /* Functional Semantic Pairs */
+  --color-success: 76 195 138;                /* #4CC38A */
+  --color-success-soft: 25 51 37;             /* #193325 */
+
+  --color-destructive: 255 99 105;            /* #FF6369 */
+  --color-destructive-soft: 58 29 30;         /* #3A1D1E */
+
+  --color-warning: 245 165 36;                /* #F5A524 */
+  --color-warning-soft: 54 39 14;             /* #36270E */
+
+  /* Elevation Shadows (Dark Diffusion) */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.20);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.30);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.40);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.50);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.60);
+}
