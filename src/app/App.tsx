@@ -1,14 +1,121 @@
+import { useThemeStore } from '@/stores/themeStore';
+
 export function App() {
+  const theme = useThemeStore((s) => s.theme);
+  const resolvedTheme = useThemeStore((s) => s.resolvedTheme);
+  const setTheme = useThemeStore((s) => s.setTheme);
+
   return (
     <div className="min-h-screen bg-background text-text-primary p-8 font-sans">
-      <header className="max-w-6xl mx-auto mb-10 pb-6 border-b border-border">
-        <h1 className="text-3xl font-bold tracking-tight">LifeOS — Phase 2 Design System Verification Gallery</h1>
-        <p className="mt-2 text-sm text-text-secondary-accessible">
-          Centralized Design Tokens, Opacity Scales, WCAG 2.2 AA Contrast Verification &amp; Bilingual Typography
-        </p>
+      <header className="max-w-6xl mx-auto mb-10 pb-6 border-b border-border flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">LifeOS — Design System &amp; Theme Gallery</h1>
+          <p className="mt-2 text-sm text-text-secondary-accessible">
+            Phase 2 Design Tokens &amp; Phase 3.2 Theme Architecture (Zero-FOUC, OS Sync &amp; Cross-Tab Persistence)
+          </p>
+        </div>
+
+        {/* Quick Theme Switcher Controls */}
+        <div className="flex items-center gap-2 p-1.5 rounded-lg border border-border bg-surface shadow-xs shrink-0 self-start md:self-auto">
+          <button
+            type="button"
+            onClick={() => setTheme('light')}
+            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+              theme === 'light'
+                ? 'bg-primary text-background shadow-xs'
+                : 'text-text-secondary hover:text-text-primary hover:bg-surface-secondary'
+            }`}
+            aria-pressed={theme === 'light'}
+          >
+            Light
+          </button>
+          <button
+            type="button"
+            onClick={() => setTheme('dark')}
+            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+              theme === 'dark'
+                ? 'bg-primary text-background shadow-xs'
+                : 'text-text-secondary hover:text-text-primary hover:bg-surface-secondary'
+            }`}
+            aria-pressed={theme === 'dark'}
+          >
+            Dark
+          </button>
+          <button
+            type="button"
+            onClick={() => setTheme('system')}
+            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+              theme === 'system'
+                ? 'bg-primary text-background shadow-xs'
+                : 'text-text-secondary hover:text-text-primary hover:bg-surface-secondary'
+            }`}
+            aria-pressed={theme === 'system'}
+          >
+            System
+          </button>
+        </div>
       </header>
 
       <main className="max-w-6xl mx-auto space-y-16">
+        {/* Phase 3.2 Theme Architecture Section */}
+        <section className="space-y-6">
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-semibold">Theme Architecture (Phase 3.2)</h2>
+              <span className="text-xs px-2.5 py-0.5 rounded-full font-medium bg-primary-soft text-primary">
+                Active
+              </span>
+            </div>
+            <p className="text-sm text-text-secondary-accessible mt-1">
+              Synchronous anti-FOUC bootstrap, OS media query sync, safe validated storage, and real-time DOM coordination.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-4 rounded-lg border border-border bg-surface shadow-xs space-y-1">
+              <div className="text-xs text-text-secondary-accessible font-medium">Selected Preference</div>
+              <div className="text-lg font-bold capitalize flex items-center gap-2">
+                <span>{theme}</span>
+                <span className="text-xs font-normal px-2 py-0.5 rounded bg-surface-secondary text-text-secondary-accessible border border-border">
+                  mode
+                </span>
+              </div>
+              <div className="text-xs text-text-secondary-accessible">Stored in lifeos-theme (v1)</div>
+            </div>
+
+            <div className="p-4 rounded-lg border border-border bg-surface shadow-xs space-y-1">
+              <div className="text-xs text-text-secondary-accessible font-medium">Resolved Theme</div>
+              <div className="text-lg font-bold capitalize flex items-center gap-2">
+                <span>{resolvedTheme}</span>
+                <span className={`text-xs font-normal px-2 py-0.5 rounded border ${
+                  resolvedTheme === 'dark'
+                    ? 'bg-surface-secondary text-primary border-primary/30'
+                    : 'bg-primary-soft text-primary border-primary/20'
+                }`}>
+                  computed
+                </span>
+              </div>
+              <div className="text-xs text-text-secondary-accessible">Evaluated via matchMedia / explicit</div>
+            </div>
+
+            <div className="p-4 rounded-lg border border-border bg-surface shadow-xs space-y-1">
+              <div className="text-xs text-text-secondary-accessible font-medium">DOM &lt;html&gt; Class</div>
+              <div className="text-lg font-bold font-mono text-primary flex items-center gap-2">
+                <span>{resolvedTheme === 'dark' ? '.dark' : ':root (none)'}</span>
+              </div>
+              <div className="text-xs text-text-secondary-accessible">Toggles CSS custom property palette</div>
+            </div>
+
+            <div className="p-4 rounded-lg border border-border bg-surface shadow-xs space-y-1">
+              <div className="text-xs text-text-secondary-accessible font-medium">Browser color-scheme</div>
+              <div className="text-lg font-bold font-mono flex items-center gap-2">
+                <span>{resolvedTheme}</span>
+              </div>
+              <div className="text-xs text-text-secondary-accessible">Aligns native scrollbars &amp; controls</div>
+            </div>
+          </div>
+        </section>
+
         {/* 1. Core Palette Swatches & Opacity Demonstration */}
         <section className="space-y-6">
           <div>

@@ -5,6 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="LifeOS — AI-native personal productivity platform" />
     <title>LifeOS</title>
+    <!-- Anti-FOUC Theme Synchronous Bootstrap -->
+    <script>
+      (function() {
+        var THEME_STORAGE_VERSION = 1;
+        var themeMode = 'system';
+
+        try {
+          var raw = localStorage.getItem('lifeos-theme');
+          if (raw) {
+            var envelope = JSON.parse(raw);
+            if (
+              envelope &&
+              typeof envelope === 'object' &&
+              envelope.version === THEME_STORAGE_VERSION &&
+              envelope.state &&
+              typeof envelope.state === 'object'
+            ) {
+              var theme = envelope.state.theme;
+              if (theme === 'light' || theme === 'dark' || theme === 'system') {
+                themeMode = theme;
+              }
+            }
+          }
+        } catch (e) {
+          themeMode = 'system';
+        }
+
+        var isDark = false;
+        try {
+          if (themeMode === 'system') {
+            isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          } else {
+            isDark = themeMode === 'dark';
+          }
+        } catch (e) {
+          isDark = false;
+        }
+
+        try {
+          var root = document.documentElement;
+          if (isDark) {
+            root.classList.add('dark');
+            root.style.colorScheme = 'dark';
+          } else {
+            root.classList.remove('dark');
+            root.style.colorScheme = 'light';
+          }
+        } catch (e) {
+          // Fallback if documentElement is not yet accessible
+        }
+      })();
+    </script>
   </head>
   <body class="bg-background text-text-primary antialiased">
     <div id="root"></div>
