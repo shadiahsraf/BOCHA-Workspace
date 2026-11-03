@@ -5,24 +5,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="LifeOS — AI-native personal productivity platform" />
     <title>LifeOS</title>
-    <!-- Anti-FOUC Theme Synchronous Bootstrap -->
+    <!-- Synchronous Anti-FOUC & Anti-Layout-Shift Bootstrap -->
     <script>
       (function() {
+        var root = document.documentElement;
+
+        // 1. Theme Bootstrap
         var THEME_STORAGE_VERSION = 1;
         var themeMode = 'system';
 
         try {
-          var raw = localStorage.getItem('lifeos-theme');
-          if (raw) {
-            var envelope = JSON.parse(raw);
+          var rawTheme = localStorage.getItem('lifeos-theme');
+          if (rawTheme) {
+            var themeEnvelope = JSON.parse(rawTheme);
             if (
-              envelope &&
-              typeof envelope === 'object' &&
-              envelope.version === THEME_STORAGE_VERSION &&
-              envelope.state &&
-              typeof envelope.state === 'object'
+              themeEnvelope &&
+              typeof themeEnvelope === 'object' &&
+              themeEnvelope.version === THEME_STORAGE_VERSION &&
+              themeEnvelope.state &&
+              typeof themeEnvelope.state === 'object'
             ) {
-              var theme = envelope.state.theme;
+              var theme = themeEnvelope.state.theme;
               if (theme === 'light' || theme === 'dark' || theme === 'system') {
                 themeMode = theme;
               }
@@ -44,13 +47,53 @@
         }
 
         try {
-          var root = document.documentElement;
           if (isDark) {
             root.classList.add('dark');
             root.style.colorScheme = 'dark';
           } else {
             root.classList.remove('dark');
             root.style.colorScheme = 'light';
+          }
+        } catch (e) {
+          // Fallback if documentElement is not yet accessible
+        }
+
+        // 2. Locale & Direction Bootstrap
+        var LOCALE_STORAGE_VERSION = 1;
+        var locale = 'en';
+
+        try {
+          var rawLocale = localStorage.getItem('lifeos-locale');
+          if (rawLocale) {
+            var localeEnvelope = JSON.parse(rawLocale);
+            if (
+              localeEnvelope &&
+              typeof localeEnvelope === 'object' &&
+              localeEnvelope.version === LOCALE_STORAGE_VERSION &&
+              localeEnvelope.state &&
+              typeof localeEnvelope.state === 'object'
+            ) {
+              var loc = localeEnvelope.state.locale;
+              if (loc === 'en' || loc === 'ar') {
+                locale = loc;
+              }
+            }
+          }
+        } catch (e) {
+          locale = 'en';
+        }
+
+        try {
+          var isAr = locale === 'ar';
+          root.lang = locale;
+          root.dir = isAr ? 'rtl' : 'ltr';
+
+          if (isAr) {
+            root.classList.add('font-arabic');
+            root.classList.remove('font-sans');
+          } else {
+            root.classList.add('font-sans');
+            root.classList.remove('font-arabic');
           }
         } catch (e) {
           // Fallback if documentElement is not yet accessible

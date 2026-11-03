@@ -1,58 +1,99 @@
 import { useThemeStore } from '@/stores/themeStore';
+import { useLocaleStore } from '@/stores/localeStore';
+import { useDirection } from '@/hooks/useDirection';
+import { useTranslation } from '@/i18n/useTranslation';
 
 export function App() {
   const theme = useThemeStore((s) => s.theme);
   const resolvedTheme = useThemeStore((s) => s.resolvedTheme);
   const setTheme = useThemeStore((s) => s.setTheme);
 
+  const locale = useLocaleStore((s) => s.locale);
+  const setLocale = useLocaleStore((s) => s.setLocale);
+  const { direction, isRtl } = useDirection();
+  const { t } = useTranslation();
+
   return (
-    <div className="min-h-screen bg-background text-text-primary p-8 font-sans">
+    <div className="min-h-screen bg-background text-text-primary p-8">
       <header className="max-w-6xl mx-auto mb-10 pb-6 border-b border-border flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">LifeOS — Design System &amp; Theme Gallery</h1>
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t('verification.heading')}
+          </h1>
           <p className="mt-2 text-sm text-text-secondary-accessible">
-            Phase 2 Design Tokens &amp; Phase 3.2 Theme Architecture (Zero-FOUC, OS Sync &amp; Cross-Tab Persistence)
+            {t('verification.subheading')}
           </p>
         </div>
 
-        {/* Quick Theme Switcher Controls */}
-        <div className="flex items-center gap-2 p-1.5 rounded-lg border border-border bg-surface shadow-xs shrink-0 self-start md:self-auto">
-          <button
-            type="button"
-            onClick={() => setTheme('light')}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
-              theme === 'light'
-                ? 'bg-primary text-background shadow-xs'
-                : 'text-text-secondary hover:text-text-primary hover:bg-surface-secondary'
-            }`}
-            aria-pressed={theme === 'light'}
-          >
-            Light
-          </button>
-          <button
-            type="button"
-            onClick={() => setTheme('dark')}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
-              theme === 'dark'
-                ? 'bg-primary text-background shadow-xs'
-                : 'text-text-secondary hover:text-text-primary hover:bg-surface-secondary'
-            }`}
-            aria-pressed={theme === 'dark'}
-          >
-            Dark
-          </button>
-          <button
-            type="button"
-            onClick={() => setTheme('system')}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
-              theme === 'system'
-                ? 'bg-primary text-background shadow-xs'
-                : 'text-text-secondary hover:text-text-primary hover:bg-surface-secondary'
-            }`}
-            aria-pressed={theme === 'system'}
-          >
-            System
-          </button>
+        {/* Quick Header Controls: Theme & Language Switchers */}
+        <div className="flex flex-wrap items-center gap-3 shrink-0 self-start md:self-auto">
+          {/* Language Switcher */}
+          <div className="flex items-center gap-1.5 p-1.5 rounded-lg border border-border bg-surface shadow-xs">
+            <button
+              type="button"
+              onClick={() => setLocale('en')}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+                locale === 'en'
+                  ? 'bg-primary text-background shadow-xs'
+                  : 'text-text-secondary hover:text-text-primary hover:bg-surface-secondary'
+              }`}
+              aria-pressed={locale === 'en'}
+            >
+              {t('locale.english')}
+            </button>
+            <button
+              type="button"
+              onClick={() => setLocale('ar')}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+                locale === 'ar'
+                  ? 'bg-primary text-background shadow-xs'
+                  : 'text-text-secondary hover:text-text-primary hover:bg-surface-secondary'
+              }`}
+              aria-pressed={locale === 'ar'}
+            >
+              {t('locale.arabic')}
+            </button>
+          </div>
+
+          {/* Theme Switcher */}
+          <div className="flex items-center gap-1.5 p-1.5 rounded-lg border border-border bg-surface shadow-xs">
+            <button
+              type="button"
+              onClick={() => setTheme('light')}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+                theme === 'light'
+                  ? 'bg-primary text-background shadow-xs'
+                  : 'text-text-secondary hover:text-text-primary hover:bg-surface-secondary'
+              }`}
+              aria-pressed={theme === 'light'}
+            >
+              {t('theme.light')}
+            </button>
+            <button
+              type="button"
+              onClick={() => setTheme('dark')}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+                theme === 'dark'
+                  ? 'bg-primary text-background shadow-xs'
+                  : 'text-text-secondary hover:text-text-primary hover:bg-surface-secondary'
+              }`}
+              aria-pressed={theme === 'dark'}
+            >
+              {t('theme.dark')}
+            </button>
+            <button
+              type="button"
+              onClick={() => setTheme('system')}
+              className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+                theme === 'system'
+                  ? 'bg-primary text-background shadow-xs'
+                  : 'text-text-secondary hover:text-text-primary hover:bg-surface-secondary'
+              }`}
+              aria-pressed={theme === 'system'}
+            >
+              {t('theme.system')}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -61,7 +102,7 @@ export function App() {
         <section className="space-y-6">
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-xl font-semibold">Theme Architecture (Phase 3.2)</h2>
+              <h2 className="text-xl font-semibold">{t('theme.title')} (Phase 3.2)</h2>
               <span className="text-xs px-2.5 py-0.5 rounded-full font-medium bg-primary-soft text-primary">
                 Active
               </span>
@@ -73,7 +114,7 @@ export function App() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="p-4 rounded-lg border border-border bg-surface shadow-xs space-y-1">
-              <div className="text-xs text-text-secondary-accessible font-medium">Selected Preference</div>
+              <div className="text-xs text-text-secondary-accessible font-medium">{t('theme.selectedPreference')}</div>
               <div className="text-lg font-bold capitalize flex items-center gap-2">
                 <span>{theme}</span>
                 <span className="text-xs font-normal px-2 py-0.5 rounded bg-surface-secondary text-text-secondary-accessible border border-border">
@@ -84,7 +125,7 @@ export function App() {
             </div>
 
             <div className="p-4 rounded-lg border border-border bg-surface shadow-xs space-y-1">
-              <div className="text-xs text-text-secondary-accessible font-medium">Resolved Theme</div>
+              <div className="text-xs text-text-secondary-accessible font-medium">{t('theme.resolvedTheme')}</div>
               <div className="text-lg font-bold capitalize flex items-center gap-2">
                 <span>{resolvedTheme}</span>
                 <span className={`text-xs font-normal px-2 py-0.5 rounded border ${
@@ -99,7 +140,7 @@ export function App() {
             </div>
 
             <div className="p-4 rounded-lg border border-border bg-surface shadow-xs space-y-1">
-              <div className="text-xs text-text-secondary-accessible font-medium">DOM &lt;html&gt; Class</div>
+              <div className="text-xs text-text-secondary-accessible font-medium">{t('theme.domClass')}</div>
               <div className="text-lg font-bold font-mono text-primary flex items-center gap-2">
                 <span>{resolvedTheme === 'dark' ? '.dark' : ':root (none)'}</span>
               </div>
@@ -107,12 +148,99 @@ export function App() {
             </div>
 
             <div className="p-4 rounded-lg border border-border bg-surface shadow-xs space-y-1">
-              <div className="text-xs text-text-secondary-accessible font-medium">Browser color-scheme</div>
+              <div className="text-xs text-text-secondary-accessible font-medium">{t('theme.colorScheme')}</div>
               <div className="text-lg font-bold font-mono flex items-center gap-2">
                 <span>{resolvedTheme}</span>
               </div>
               <div className="text-xs text-text-secondary-accessible">Aligns native scrollbars &amp; controls</div>
             </div>
+          </div>
+        </section>
+
+        {/* Phase 3.3 Locale & Internationalization Section */}
+        <section className="space-y-6">
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-semibold">{t('locale.title')} (Phase 3.3)</h2>
+              <span className="text-xs px-2.5 py-0.5 rounded-full font-medium bg-primary-soft text-primary">
+                Active
+              </span>
+            </div>
+            <p className="text-sm text-text-secondary-accessible mt-1">
+              Type-safe compile-time i18n dictionaries, persistent locale preference, document lang/dir synchronization, and bidirectional logical layouts.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-4 rounded-lg border border-border bg-surface shadow-xs space-y-1">
+              <div className="text-xs text-text-secondary-accessible font-medium">{t('locale.currentLanguage')}</div>
+              <div className="text-lg font-bold flex items-center gap-2">
+                <span>{locale === 'ar' ? 'العربية' : 'English'}</span>
+                <span className="text-xs font-mono px-2 py-0.5 rounded bg-surface-secondary text-text-secondary-accessible border border-border">
+                  {locale}
+                </span>
+              </div>
+              <div className="text-xs text-text-secondary-accessible">Stored in lifeos-locale (v1)</div>
+            </div>
+
+            <div className="p-4 rounded-lg border border-border bg-surface shadow-xs space-y-1">
+              <div className="text-xs text-text-secondary-accessible font-medium">{t('locale.layoutDirection')}</div>
+              <div className="text-lg font-bold flex items-center gap-2">
+                <span className="font-mono uppercase">{direction}</span>
+                <span className="text-xs font-normal px-2 py-0.5 rounded bg-surface-secondary text-text-secondary-accessible border border-border">
+                  {isRtl ? 'RTL' : 'LTR'}
+                </span>
+              </div>
+              <div className="text-xs text-text-secondary-accessible">Set dynamically on document &lt;html dir&gt;</div>
+            </div>
+
+            <div className="p-4 rounded-lg border border-border bg-surface shadow-xs space-y-1">
+              <div className="text-xs text-text-secondary-accessible font-medium">{t('locale.activeTypography')}</div>
+              <div className="text-lg font-bold flex items-center gap-2">
+                <span>{locale === 'ar' ? 'IBM Plex Sans Arabic' : 'Inter'}</span>
+              </div>
+              <div className="text-xs font-mono text-text-secondary-accessible">
+                {locale === 'ar' ? '.font-arabic' : '.font-sans'}
+              </div>
+            </div>
+
+            <div className="p-4 rounded-lg border border-border bg-surface shadow-xs space-y-2 flex flex-col justify-between">
+              <div>
+                <div className="text-xs text-text-secondary-accessible font-medium">Bilingual Actions</div>
+                <div className="text-xs text-text-secondary mt-1 flex items-center gap-2">
+                  <span className="px-2 py-0.5 rounded bg-surface-secondary border border-border">{t('common.save')}</span>
+                  <span className="px-2 py-0.5 rounded bg-surface-secondary border border-border">{t('common.cancel')}</span>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-md bg-primary text-background text-xs font-medium hover:bg-primary/90 transition-all self-start"
+              >
+                <span>{t('locale.navigationAction')}</span>
+                <svg
+                  className="w-3.5 h-3.5 rtl:rotate-180 transition-transform"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          {/* Bidirectional Logical Layout Preview Card */}
+          <div className="p-5 rounded-xl border border-border bg-surface shadow-xs space-y-2 border-s-4 border-s-primary">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold">{t('locale.previewCardTitle')}</h3>
+              <span className="text-xs font-mono px-2.5 py-0.5 rounded bg-surface-secondary text-primary font-medium border border-border">
+                {direction.toUpperCase()}
+              </span>
+            </div>
+            <p className="text-xs text-text-secondary-accessible leading-relaxed">
+              {t('locale.previewCardDesc')}
+            </p>
           </div>
         </section>
 

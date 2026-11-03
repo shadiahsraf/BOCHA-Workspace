@@ -1,5 +1,6 @@
 import { useEffect, type ReactNode } from 'react';
 import { useThemeStore } from '@/stores/themeStore';
+import { useLocaleStore } from '@/stores/localeStore';
 
 interface AppProvidersProps {
   children: ReactNode;
@@ -44,6 +45,9 @@ export function AppProviders({ children }: AppProvidersProps) {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === 'lifeos-theme' || event.key === null) {
         useThemeStore.persist.rehydrate();
+      }
+      if (event.key === 'lifeos-locale' || event.key === null) {
+        useLocaleStore.persist.rehydrate();
       }
     };
 
