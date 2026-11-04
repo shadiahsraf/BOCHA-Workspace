@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AppProviders } from '@/app/providers';
+import { AppLayout } from '@/components/layout/AppLayout';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { ShowcasePage } from '@/pages/ShowcasePage';
 import { NotFoundPage } from '@/pages/NotFoundPage';
@@ -9,10 +10,11 @@ export function App() {
     <AppProviders>
       <BrowserRouter>
         <Routes>
-          {/* Temporary direct mapping until AppLayout is built in Step 2 */}
-          <Route path="/" element={<DashboardPage />} />
-          <Route path="/showcase" element={<ShowcasePage />} />
-          <Route path="*" element={<NotFoundPage />} />
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<DashboardPage />} />
+            <Route path="/showcase" element={<ShowcasePage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </AppProviders>
