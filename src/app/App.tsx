@@ -2,6 +2,7 @@ import { useThemeStore } from '@/stores/themeStore';
 import { useLocaleStore } from '@/stores/localeStore';
 import { useDirection } from '@/hooks/useDirection';
 import { useTranslation } from '@/i18n/useTranslation';
+import { ComponentShowcase } from '@/app/ComponentShowcase';
 
 export function App() {
   const theme = useThemeStore((s) => s.theme);
@@ -98,6 +99,9 @@ export function App() {
       </header>
 
       <main className="max-w-6xl mx-auto space-y-16">
+        {/* Phase 4: Core UI Primitives Showcase */}
+        <ComponentShowcase />
+
         {/* Phase 3.2 Theme Architecture Section */}
         <section className="space-y-6">
           <div>
