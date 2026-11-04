@@ -2,6 +2,7 @@ import { useEffect, type ReactNode } from 'react';
 import { DirectionProvider } from '@radix-ui/react-direction';
 import { useThemeStore } from '@/stores/themeStore';
 import { useLocaleStore } from '@/stores/localeStore';
+import { useLayoutStore } from '@/stores/layoutStore';
 import { useDirection } from '@/hooks/useDirection';
 
 interface AppProvidersProps {
@@ -51,6 +52,9 @@ export function AppProviders({ children }: AppProvidersProps) {
       }
       if (event.key === 'lifeos-locale' || event.key === null) {
         useLocaleStore.persist.rehydrate();
+      }
+      if (event.key === 'lifeos-layout' || event.key === null) {
+        useLayoutStore.persist.rehydrate();
       }
     };
 
