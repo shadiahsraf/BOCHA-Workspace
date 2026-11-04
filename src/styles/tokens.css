@@ -5,16 +5,16 @@
 
 /* Light Theme (:root) */
 :root {
-  /* Core Palette (Exact approved values) */
-  --color-background: 247 247 245;            /* #F7F7F5 */
+  /* Core Palette (Warm & Earthy) */
+  --color-background: 250 250 248;            /* #FAFAF8 */
   --color-surface: 255 255 255;               /* #FFFFFF */
-  --color-surface-secondary: 240 240 237;     /* #F0F0ED */
-  --color-primary: 98 88 217;                 /* #6258D9 */
-  --color-primary-soft: 234 232 255;          /* #EAE8FF */
-  --color-text-primary: 32 33 39;             /* #202127 */
-  --color-text-secondary: 119 121 132;        /* #777984 (Original approved) */
-  --color-text-secondary-accessible: 103 105 116; /* #676974 (WCAG AA compliant variant) */
-  --color-border: 232 232 229;                /* #E8E8E5 */
+  --color-surface-secondary: 242 239 235;     /* #F2EFEB */
+  --color-primary: 166 138 100;               /* #A68A64 */
+  --color-primary-soft: 234 228 217;          /* #EAE4D9 */
+  --color-text-primary: 44 40 37;             /* #2C2825 */
+  --color-text-secondary: 122 114 106;        /* #7A726A */
+  --color-text-secondary-accessible: 122 114 106; /* #7A726A (Exceeds AA) */
+  --color-border: 227 221 211;                /* #E3DDD3 */
 
   /* Functional Semantic Pairs */
   --color-success: 24 121 78;                 /* #18794E */
@@ -60,16 +60,16 @@
 
 /* Dark Theme (.dark) */
 .dark {
-  /* Core Palette (Exact approved values) */
-  --color-background: 20 22 25;               /* #141619 */
-  --color-surface: 29 32 36;                  /* #1D2024 */
-  --color-surface-secondary: 34 38 43;        /* #22262B */
-  --color-primary: 148 139 255;               /* #948BFF */
-  --color-primary-soft: 48 45 77;             /* #302D4D */
-  --color-text-primary: 241 241 243;          /* #F1F1F3 */
-  --color-text-secondary: 163 166 176;        /* #A3A6B0 (Original approved) */
-  --color-text-secondary-accessible: 163 166 176; /* Dark theme original already exceeds AA */
-  --color-border: 48 52 58;                   /* #30343A */
+  /* Core Palette (Warm & Earthy Dark) */
+  --color-background: 28 26 25;               /* #1C1A19 */
+  --color-surface: 37 34 32;                  /* #252220 */
+  --color-surface-secondary: 49 46 43;        /* #312E2B */
+  --color-primary: 209 184 148;               /* #D1B894 */
+  --color-primary-soft: 66 58 49;             /* #423A31 */
+  --color-text-primary: 242 239 235;          /* #F2EFEB */
+  --color-text-secondary: 163 154 144;        /* #A39A90 */
+  --color-text-secondary-accessible: 163 154 144; /* #A39A90 (Exceeds AA) */
+  --color-border: 62 58 54;                   /* #3E3A36 */
 
   /* Functional Semantic Pairs */
   --color-success: 76 195 138;                /* #4CC38A */

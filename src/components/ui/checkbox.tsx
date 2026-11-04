@@ -33,8 +33,8 @@ export const Checkbox = React.forwardRef<
         isInvalid
           ? 'border-destructive focus-visible:ring-destructive'
           : 'border-border focus-visible:ring-primary',
-        'data-[state=checked]:bg-primary data-[state=checked]:text-surface dark:data-[state=checked]:text-background data-[state=checked]:border-primary',
-        'data-[state=indeterminate]:bg-primary data-[state=indeterminate]:text-surface dark:data-[state=indeterminate]:text-background data-[state=indeterminate]:border-primary',
+        'data-[state=checked]:bg-primary data-[state=checked]:text-text-primary dark:data-[state=checked]:text-background data-[state=checked]:border-primary',
+        'data-[state=indeterminate]:bg-primary data-[state=indeterminate]:text-text-primary dark:data-[state=indeterminate]:text-background data-[state=indeterminate]:border-primary',
         className
       )}
       {...props}
