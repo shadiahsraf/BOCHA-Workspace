@@ -1,6 +1,8 @@
 import { useEffect, type ReactNode } from 'react';
+import { DirectionProvider } from '@radix-ui/react-direction';
 import { useThemeStore } from '@/stores/themeStore';
 import { useLocaleStore } from '@/stores/localeStore';
+import { useDirection } from '@/hooks/useDirection';
 
 interface AppProvidersProps {
   children: ReactNode;
@@ -8,6 +10,7 @@ interface AppProvidersProps {
 
 export function AppProviders({ children }: AppProvidersProps) {
   const syncWithSystem = useThemeStore((s) => s.syncWithSystem);
+  const { direction } = useDirection();
 
   useEffect(() => {
     // 1. Listen for host OS theme changes via matchMedia
@@ -57,5 +60,5 @@ export function AppProviders({ children }: AppProvidersProps) {
     };
   }, []);
 
-  return <>{children}</>;
+  return <DirectionProvider dir={direction}>{children}</DirectionProvider>;
 }
