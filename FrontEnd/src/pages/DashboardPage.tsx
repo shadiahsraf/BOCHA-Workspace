@@ -6,199 +6,34 @@ import {
   NotebookPen,
   Clock,
   Plus,
+  AlertCircle,
+  RefreshCw,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLocaleStore } from '@/stores/localeStore';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { useDashboardData } from '@/hooks/useDashboardData';
+import type { TaskItem, ProjectItem, NoteItem, MetricItem } from '@/types/api';
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Progress } from '@/components/ui/progress';
 import { Separator } from '@/components/ui/separator';
+import { Skeleton } from '@/components/ui/skeleton';
 
-// ==========================================
-// Mock Data Interfaces
-// ==========================================
-
-export interface MockMetric {
-  id: string;
-  label: string;
-  value: string | number;
-  change: string;
-  trend: 'up' | 'down' | 'neutral';
-  icon: React.ComponentType<{ className?: string }>;
-}
-
-export interface MockTask {
-  id: string;
-  title: string;
-  completed: boolean;
-  dueDate: string;
-  priority: 'urgent' | 'high' | 'medium' | 'low';
-  project: string;
-}
-
-export interface MockProject {
-  id: string;
-  title: string;
-  category: string;
-  progress: number;
-  tasksCompleted: number;
-  tasksTotal: number;
-  dueDate: string;
-}
-
-export interface MockNote {
-  id: string;
-  title: string;
-  snippet: string;
-  updatedAt: string;
-  category: string;
-}
-
-// ==========================================
-// Initial Mock Datasets
-// ==========================================
-
-const mockMetrics: MockMetric[] = [
-  {
-    id: 'tasks',
-    label: 'Priority Tasks',
-    value: '12',
-    change: '+3 due today',
-    trend: 'up',
-    icon: CheckSquare,
-  },
-  {
-    id: 'projects',
-    label: 'Active Projects',
-    value: '4',
-    change: '2 near completion',
-    trend: 'neutral',
-    icon: Layers,
-  },
-  {
-    id: 'notes',
-    label: 'Notes & Docs',
-    value: '48',
-    change: '+8 this week',
-    trend: 'up',
-    icon: NotebookPen,
-  },
-  {
-    id: 'ai',
-    label: 'AI Interactions',
-    value: '156',
-    change: '94% helpfulness',
-    trend: 'up',
-    icon: Sparkles,
-  },
-];
-
-const initialTasks: MockTask[] = [
-  {
-    id: 'task-1',
-    title: 'Review LifeOS Design System Tokens & Typography',
-    completed: false,
-    dueDate: 'Today, 5:00 PM',
-    priority: 'urgent',
-    project: 'LifeOS Core',
-  },
-  {
-    id: 'task-2',
-    title: 'Implement Calendar Event Sync Provider & Hooks',
-    completed: false,
-    dueDate: 'Tomorrow',
-    priority: 'high',
-    project: 'Calendar',
-  },
-  {
-    id: 'task-3',
-    title: 'Draft weekly personal reflection & habit audit',
-    completed: false,
-    dueDate: 'Friday',
-    priority: 'medium',
-    project: 'Habits',
-  },
-  {
-    id: 'task-4',
-    title: 'Audit WCAG 2.2 AA contrast for light beige theme',
-    completed: true,
-    dueDate: 'Yesterday',
-    priority: 'low',
-    project: 'Design System',
-  },
-  {
-    id: 'task-5',
-    title: 'Optimize offline SQLite schema caching & migrations',
-    completed: false,
-    dueDate: 'In 3 days',
-    priority: 'medium',
-    project: 'Backend',
-  },
-];
-
-const mockProjects: MockProject[] = [
-  {
-    id: 'proj-1',
-    title: 'LifeOS Core Application',
-    category: 'Engineering',
-    progress: 75,
-    tasksCompleted: 9,
-    tasksTotal: 12,
-    dueDate: 'Nov 15',
-  },
-  {
-    id: 'proj-2',
-    title: 'AI Assistant Interaction Pipeline',
-    category: 'AI / LLM',
-    progress: 45,
-    tasksCompleted: 5,
-    tasksTotal: 11,
-    dueDate: 'Nov 22',
-  },
-  {
-    id: 'proj-3',
-    title: 'Arabic RTL Layout Refinement',
-    category: 'i18n & UX',
-    progress: 90,
-    tasksCompleted: 9,
-    tasksTotal: 10,
-    dueDate: 'Nov 10',
-  },
-];
-
-const mockNotes: MockNote[] = [
-  {
-    id: 'note-1',
-    title: 'Sprint Architecture & Layout Strategy',
-    snippet: 'Exploring collapsible sidebars with Radix tooltips and CSS logical properties.',
-    updatedAt: '2 hours ago',
-    category: 'Engineering',
-  },
-  {
-    id: 'note-2',
-    title: 'Personal Habit Scorecard Q4',
-    snippet: 'Tracking daily mindfulness, deep work blocks, and physical recovery metrics.',
-    updatedAt: 'Yesterday',
-    category: 'Personal',
-  },
-  {
-    id: 'note-3',
-    title: 'Prompt Engineering Reference Guide',
-    snippet: 'Chain-of-thought instructions and task decomposition prompts for productivity.',
-    updatedAt: '3 days ago',
-    category: 'AI Assistant',
-  },
-  {
-    id: 'note-4',
-    title: 'Health & Workout Routine',
-    snippet: 'Hypertrophy schedule and recovery tracking across weekly intervals.',
-    updatedAt: '4 days ago',
-    category: 'Health',
-  },
-];
+// Re-export types for backward compatibility
+export type MockTask = TaskItem;
+export type MockProject = ProjectItem;
+export type MockNote = NoteItem;
+export type MockMetric = MetricItem;
 
 // ==========================================
 // Helper Functions
@@ -215,7 +50,7 @@ function getGreeting(locale: string, hour = new Date().getHours()): string {
   return 'Good evening';
 }
 
-function getPriorityBadge(priority: MockTask['priority']) {
+function getPriorityBadge(priority: TaskItem['priority']) {
   switch (priority) {
     case 'urgent':
       return <Badge variant="destructive" size="sm">Urgent</Badge>;
@@ -225,6 +60,8 @@ function getPriorityBadge(priority: MockTask['priority']) {
       return <Badge variant="default" size="sm">Medium</Badge>;
     case 'low':
       return <Badge variant="secondary" size="sm">Low</Badge>;
+    default:
+      return <Badge variant="secondary" size="sm">{priority}</Badge>;
   }
 }
 
@@ -235,8 +72,10 @@ export interface DashboardPageProps {
 export function DashboardPage({ locale: localeProp }: DashboardPageProps = {}) {
   const storeLocale = useLocaleStore((s) => s.locale);
   const locale = localeProp ?? storeLocale;
-  const [tasks, setTasks] = useState<MockTask[]>(initialTasks);
   const [aiPrompt, setAiPrompt] = useState('');
+
+  const { tasks, projects, notes, isLoading, error, toggleTask, refetch } =
+    useDashboardData();
 
   const now = new Date();
   const greeting = getGreeting(locale, now.getHours());
@@ -249,11 +88,40 @@ export function DashboardPage({ locale: localeProp }: DashboardPageProps = {}) {
 
   const completedCount = tasks.filter((t) => t.completed).length;
 
-  const toggleTask = (taskId: string) => {
-    setTasks((prev) =>
-      prev.map((t) => (t.id === taskId ? { ...t, completed: !t.completed } : t))
-    );
-  };
+  const metrics: MetricItem[] = [
+    {
+      id: 'tasks',
+      label: 'Priority Tasks',
+      value: tasks.length,
+      change: `${completedCount} completed`,
+      trend: 'up',
+      icon: CheckSquare,
+    },
+    {
+      id: 'projects',
+      label: 'Active Projects',
+      value: projects.length,
+      change: `${projects.filter((p) => p.progress >= 70).length} near completion`,
+      trend: 'neutral',
+      icon: Layers,
+    },
+    {
+      id: 'notes',
+      label: 'Notes & Docs',
+      value: notes.length,
+      change: 'Synced from API',
+      trend: 'up',
+      icon: NotebookPen,
+    },
+    {
+      id: 'ai',
+      label: 'AI Interactions',
+      value: '156',
+      change: '94% helpfulness',
+      trend: 'up',
+      icon: Sparkles,
+    },
+  ];
 
   return (
     <div className="flex flex-col gap-6 lg:gap-8 pb-10 max-w-7xl mx-auto">
@@ -272,6 +140,32 @@ export function DashboardPage({ locale: localeProp }: DashboardPageProps = {}) {
             {formattedDate}
           </span>
         </div>
+
+        {/* Error Notification Banner with Retry */}
+        {error && (
+          <div className="rounded-xl border border-destructive/30 bg-destructive/10 p-4 text-start flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-in fade-in duration-200">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="h-5 w-5 text-destructive shrink-0" />
+              <div>
+                <h3 className="text-sm font-semibold text-text-primary">
+                  Backend API Connection Notice
+                </h3>
+                <p className="text-xs text-text-secondary mt-0.5">
+                  {error} (Ensure Django is running on port 8000)
+                </p>
+              </div>
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => refetch()}
+              className="h-8 text-xs gap-1.5 shrink-0 self-end sm:self-auto"
+            >
+              <RefreshCw className="h-3.5 w-3.5" />
+              <span>Retry</span>
+            </Button>
+          </div>
+        )}
 
         {/* Quick AI Command Prompt */}
         <div className="w-full">
@@ -296,32 +190,45 @@ export function DashboardPage({ locale: localeProp }: DashboardPageProps = {}) {
 
       {/* 2. KPI Metrics Grid */}
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {mockMetrics.map((metric) => {
-          const Icon = metric.icon;
-          return (
-            <Card
-              key={metric.id}
-              className="relative overflow-hidden transition-all duration-normal hover:shadow-md hover:-translate-y-0.5 motion-reduce:transform-none"
-            >
-              <CardContent className="p-5 flex items-center justify-between">
-                <div className="space-y-1 text-start">
-                  <span className="text-xs font-medium text-text-secondary">
-                    {metric.label}
-                  </span>
-                  <div className="text-2xl font-bold text-text-primary tracking-tight">
-                    {metric.value}
+        {isLoading
+          ? Array.from({ length: 4 }).map((_, i) => (
+              <Card key={`metric-skel-${i}`} className="p-5">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-2 w-3/4">
+                    <Skeleton className="h-3 w-20" />
+                    <Skeleton className="h-7 w-14" />
+                    <Skeleton className="h-3 w-28" />
                   </div>
-                  <span className="text-xs text-text-secondary-accessible block">
-                    {metric.change}
-                  </span>
+                  <Skeleton className="h-11 w-11 rounded-xl" />
                 </div>
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-text-primary dark:text-primary border border-primary/20">
-                  <Icon className="h-5 w-5" />
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+              </Card>
+            ))
+          : metrics.map((metric) => {
+              const Icon = metric.icon;
+              return (
+                <Card
+                  key={metric.id}
+                  className="relative overflow-hidden transition-all duration-normal hover:shadow-md hover:-translate-y-0.5 motion-reduce:transform-none"
+                >
+                  <CardContent className="p-5 flex items-center justify-between">
+                    <div className="space-y-1 text-start">
+                      <span className="text-xs font-medium text-text-secondary">
+                        {metric.label}
+                      </span>
+                      <div className="text-2xl font-bold text-text-primary tracking-tight">
+                        {metric.value}
+                      </div>
+                      <span className="text-xs text-text-secondary-accessible block">
+                        {metric.change}
+                      </span>
+                    </div>
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-text-primary dark:text-primary border border-primary/20">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
       </section>
 
       {/* 3. Main Content Grid (Tasks Column + Projects/Notes Column) */}
@@ -333,7 +240,9 @@ export function DashboardPage({ locale: localeProp }: DashboardPageProps = {}) {
               <div>
                 <CardTitle className="text-base font-semibold">Priority Tasks</CardTitle>
                 <CardDescription className="text-xs mt-0.5">
-                  {completedCount} of {tasks.length} tasks completed
+                  {isLoading
+                    ? 'Loading tasks from backend...'
+                    : `${completedCount} of ${tasks.length} tasks completed`}
                 </CardDescription>
               </div>
               <Button size="sm" variant="outline" className="h-8 text-xs gap-1.5">
@@ -341,53 +250,78 @@ export function DashboardPage({ locale: localeProp }: DashboardPageProps = {}) {
                 <span>New Task</span>
               </Button>
             </CardHeader>
+
             <CardContent className="space-y-3 flex-1">
-              {tasks.map((task, idx) => (
-                <div key={task.id}>
-                  <div className="flex items-start gap-3 py-1.5 transition-colors">
-                    <div className="pt-0.5">
-                      <Checkbox
-                        id={task.id}
-                        checked={task.completed}
-                        onCheckedChange={() => toggleTask(task.id)}
-                        aria-label={`Mark "${task.title}" as ${
-                          task.completed ? 'incomplete' : 'complete'
-                        }`}
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0 space-y-1 text-start">
-                      <label
-                        htmlFor={task.id}
-                        className={cn(
-                          'text-sm font-medium cursor-pointer block leading-snug transition-colors',
-                          task.completed
-                            ? 'line-through text-text-secondary'
-                            : 'text-text-primary'
-                        )}
-                      >
-                        {task.title}
-                      </label>
-                      <div className="flex flex-wrap items-center gap-2 text-xs text-text-secondary">
-                        <span className="inline-flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {task.dueDate}
-                        </span>
-                        <span>•</span>
-                        <span className="px-1.5 py-0.5 rounded bg-surface-secondary text-[11px] font-medium text-text-secondary">
-                          {task.project}
-                        </span>
+              {isLoading ? (
+                Array.from({ length: 4 }).map((_, i) => (
+                  <div key={`task-skel-${i}`} className="space-y-2 py-2">
+                    <div className="flex items-center gap-3">
+                      <Skeleton className="h-4 w-4 rounded" />
+                      <div className="space-y-1.5 flex-1">
+                        <Skeleton className="h-4 w-4/5" />
+                        <Skeleton className="h-3 w-1/3" />
                       </div>
                     </div>
-                    <div className="shrink-0 pt-0.5">
-                      {getPriorityBadge(task.priority)}
-                    </div>
+                    {i < 3 && <Separator className="my-2" />}
                   </div>
-                  {idx < tasks.length - 1 && <Separator className="my-2" />}
+                ))
+              ) : tasks.length === 0 ? (
+                <div className="py-8 text-center text-text-secondary text-sm">
+                  <CheckSquare className="h-8 w-8 mx-auto mb-2 text-text-secondary/50" />
+                  <p className="font-medium">No priority tasks found</p>
+                  <p className="text-xs text-text-secondary-accessible mt-1">
+                    Tasks created in Django or via the API will display here.
+                  </p>
                 </div>
-              ))}
+              ) : (
+                tasks.map((task, idx) => (
+                  <div key={task.id}>
+                    <div className="flex items-start gap-3 py-1.5 transition-colors">
+                      <div className="pt-0.5">
+                        <Checkbox
+                          id={String(task.id)}
+                          checked={task.completed}
+                          onCheckedChange={() => toggleTask(task.id)}
+                          aria-label={`Mark "${task.title}" as ${
+                            task.completed ? 'incomplete' : 'complete'
+                          }`}
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0 space-y-1 text-start">
+                        <label
+                          htmlFor={String(task.id)}
+                          className={cn(
+                            'text-sm font-medium cursor-pointer block leading-snug transition-colors',
+                            task.completed
+                              ? 'line-through text-text-secondary'
+                              : 'text-text-primary'
+                          )}
+                        >
+                          {task.title}
+                        </label>
+                        <div className="flex flex-wrap items-center gap-2 text-xs text-text-secondary">
+                          <span className="inline-flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {task.dueDate}
+                          </span>
+                          <span>•</span>
+                          <span className="px-1.5 py-0.5 rounded bg-surface-secondary text-[11px] font-medium text-text-secondary">
+                            {task.project}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="shrink-0 pt-0.5">
+                        {getPriorityBadge(task.priority)}
+                      </div>
+                    </div>
+                    {idx < tasks.length - 1 && <Separator className="my-2" />}
+                  </div>
+                ))
+              )}
             </CardContent>
+
             <CardFooter className="pt-2 border-t border-border flex flex-col sm:flex-row justify-between items-center sm:items-end gap-3 text-xs text-text-secondary">
-              <span>Focus tasks due within 72 hours</span>
+              <span>Focus tasks synced via REST API</span>
               <button
                 type="button"
                 className="text-primary hover:underline font-medium text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm"
@@ -410,35 +344,60 @@ export function DashboardPage({ locale: localeProp }: DashboardPageProps = {}) {
                 </CardDescription>
               </div>
               <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary-soft text-text-primary dark:text-primary border border-primary/20">
-                {mockProjects.length} active
+                {isLoading ? '...' : `${projects.length} active`}
               </span>
             </CardHeader>
             <CardContent className="space-y-4">
-              {mockProjects.map((project, idx) => (
-                <div key={project.id} className="space-y-2">
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2 min-w-0">
-                      <span className="font-medium text-text-primary truncate">
-                        {project.title}
-                      </span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-secondary text-text-secondary border border-border shrink-0">
-                        {project.category}
+              {isLoading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <div key={`proj-skel-${i}`} className="space-y-2 py-1">
+                    <div className="flex justify-between">
+                      <Skeleton className="h-4 w-1/2" />
+                      <Skeleton className="h-4 w-10" />
+                    </div>
+                    <Skeleton className="h-2 w-full" />
+                    <div className="flex justify-between">
+                      <Skeleton className="h-3 w-1/3" />
+                      <Skeleton className="h-3 w-1/4" />
+                    </div>
+                    {i < 2 && <Separator className="my-2" />}
+                  </div>
+                ))
+              ) : projects.length === 0 ? (
+                <div className="py-6 text-center text-text-secondary text-sm">
+                  <Layers className="h-7 w-7 mx-auto mb-2 text-text-secondary/50" />
+                  <p className="font-medium">No active projects</p>
+                  <p className="text-xs text-text-secondary-accessible mt-1">
+                    Add projects to track your key milestones.
+                  </p>
+                </div>
+              ) : (
+                projects.map((project, idx) => (
+                  <div key={project.id} className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="font-medium text-text-primary truncate">
+                          {project.title}
+                        </span>
+                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-secondary text-text-secondary border border-border shrink-0">
+                          {project.category}
+                        </span>
+                      </div>
+                      <span className="text-xs font-semibold text-text-primary shrink-0">
+                        {project.progress}%
                       </span>
                     </div>
-                    <span className="text-xs font-semibold text-text-primary shrink-0">
-                      {project.progress}%
-                    </span>
+                    <Progress value={project.progress} />
+                    <div className="flex items-center justify-between text-xs text-text-secondary">
+                      <span>
+                        {project.tasksCompleted} of {project.tasksTotal} tasks
+                      </span>
+                      <span>Target: {project.dueDate}</span>
+                    </div>
+                    {idx < projects.length - 1 && <Separator className="my-2" />}
                   </div>
-                  <Progress value={project.progress} />
-                  <div className="flex items-center justify-between text-xs text-text-secondary">
-                    <span>
-                      {project.tasksCompleted} of {project.tasksTotal} tasks
-                    </span>
-                    <span>Target: {project.dueDate}</span>
-                  </div>
-                  {idx < mockProjects.length - 1 && <Separator className="my-2" />}
-                </div>
-              ))}
+                ))
+              )}
             </CardContent>
           </Card>
 
@@ -459,27 +418,48 @@ export function DashboardPage({ locale: localeProp }: DashboardPageProps = {}) {
               </button>
             </CardHeader>
             <CardContent className="space-y-3">
-              {mockNotes.map((note, idx) => (
-                <div key={note.id}>
-                  <button
-                    type="button"
-                    className="w-full text-start space-y-1 p-2 -mx-2 rounded-lg transition-colors hover:bg-surface-secondary/60 focus-visible:bg-surface-secondary/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 block group"
-                  >
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-sm font-medium text-text-primary group-hover:text-primary transition-colors truncate">
-                        {note.title}
-                      </h4>
-                      <span className="text-[11px] text-text-secondary shrink-0 ms-2">
-                        {note.updatedAt}
-                      </span>
+              {isLoading ? (
+                Array.from({ length: 3 }).map((_, i) => (
+                  <div key={`note-skel-${i}`} className="space-y-2 py-1">
+                    <div className="flex justify-between">
+                      <Skeleton className="h-4 w-2/3" />
+                      <Skeleton className="h-3 w-12" />
                     </div>
-                    <p className="text-xs text-text-secondary-accessible line-clamp-1 leading-relaxed">
-                      {note.snippet}
-                    </p>
-                  </button>
-                  {idx < mockNotes.length - 1 && <Separator className="my-1.5" />}
+                    <Skeleton className="h-3 w-full" />
+                    {i < 2 && <Separator className="my-1.5" />}
+                  </div>
+                ))
+              ) : notes.length === 0 ? (
+                <div className="py-6 text-center text-text-secondary text-sm">
+                  <NotebookPen className="h-7 w-7 mx-auto mb-2 text-text-secondary/50" />
+                  <p className="font-medium">No notes available</p>
+                  <p className="text-xs text-text-secondary-accessible mt-1">
+                    Create architecture memos or notes.
+                  </p>
                 </div>
-              ))}
+              ) : (
+                notes.map((note, idx) => (
+                  <div key={note.id}>
+                    <button
+                      type="button"
+                      className="w-full text-start space-y-1 p-2 -mx-2 rounded-lg transition-colors hover:bg-surface-secondary/60 focus-visible:bg-surface-secondary/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 block group"
+                    >
+                      <div className="flex items-center justify-between">
+                        <h4 className="text-sm font-medium text-text-primary group-hover:text-primary transition-colors truncate">
+                          {note.title}
+                        </h4>
+                        <span className="text-[11px] text-text-secondary shrink-0 ms-2">
+                          {note.updatedAt}
+                        </span>
+                      </div>
+                      <p className="text-xs text-text-secondary-accessible line-clamp-1 leading-relaxed">
+                        {note.snippet}
+                      </p>
+                    </button>
+                    {idx < notes.length - 1 && <Separator className="my-1.5" />}
+                  </div>
+                ))
+              )}
             </CardContent>
           </Card>
         </div>
