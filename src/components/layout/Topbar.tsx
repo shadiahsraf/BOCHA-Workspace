@@ -1,5 +1,6 @@
-import { Search, Sparkles, User, Settings, LogOut, Sun, Moon, Laptop, Globe } from 'lucide-react';
+import { Search, Sparkles, User, Settings, LogOut, Sun, Moon, Laptop, Globe, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { IconButton } from '@/components/ui/icon-button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -12,6 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useThemeStore } from '@/stores/themeStore';
 import { useLocaleStore } from '@/stores/localeStore';
+import { useLayoutStore } from '@/stores/layoutStore';
 import { useTranslation } from '@/i18n/useTranslation';
 
 export function Topbar() {
@@ -19,12 +21,22 @@ export function Topbar() {
   const setTheme = useThemeStore((s) => s.setTheme);
   const locale = useLocaleStore((s) => s.locale);
   const setLocale = useLocaleStore((s) => s.setLocale);
+  const toggleMobileSidebar = useLayoutStore((s) => s.toggleMobileSidebar);
   const { t } = useTranslation();
 
   return (
     <header className="h-[60px] min-h-[60px] flex items-center justify-between border-b border-border bg-surface px-4 lg:px-6 z-10 shrink-0">
-      {/* Left side: Page title / Breadcrumb */}
-      <div className="flex items-center gap-3">
+      {/* Left side: Mobile menu toggle + Page title / Breadcrumb */}
+      <div className="flex items-center gap-2 sm:gap-3">
+        <IconButton
+          variant="ghost"
+          size="sm"
+          onClick={toggleMobileSidebar}
+          className="md:hidden me-1 text-text-secondary hover:text-text-primary"
+          aria-label="Toggle navigation menu"
+        >
+          <Menu className="h-5 w-5" />
+        </IconButton>
         <h1 className="text-sm font-semibold text-text-primary tracking-tight">
           {t('common.appName')}
         </h1>
@@ -39,7 +51,7 @@ export function Topbar() {
         {/* Quick Search Button */}
         <button
           type="button"
-          className="hidden sm:flex items-center gap-2 h-9 px-3 rounded-lg border border-border bg-surface-secondary/40 text-xs text-text-secondary hover:text-text-primary hover:border-primary/40 hover:bg-surface-secondary transition-all"
+          className="hidden sm:flex items-center gap-2 h-9 px-3 rounded-lg border border-border bg-surface-secondary/40 text-xs text-text-secondary hover:text-text-primary hover:border-primary/40 hover:bg-surface-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 transition-all"
           aria-label="Quick search (⌘K)"
         >
           <Search className="h-3.5 w-3.5" />

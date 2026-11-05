@@ -386,11 +386,11 @@ export function DashboardPage({ locale: localeProp }: DashboardPageProps = {}) {
                 </div>
               ))}
             </CardContent>
-            <CardFooter className="pt-2 border-t border-border flex justify-between text-xs text-text-secondary">
+            <CardFooter className="pt-2 border-t border-border flex flex-col sm:flex-row justify-between items-center sm:items-end gap-3 text-xs text-text-secondary">
               <span>Focus tasks due within 72 hours</span>
               <button
                 type="button"
-                className="text-primary hover:underline font-medium text-xs focus-visible:outline-none"
+                className="text-primary hover:underline font-medium text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm"
               >
                 View all tasks →
               </button>
@@ -453,29 +453,31 @@ export function DashboardPage({ locale: localeProp }: DashboardPageProps = {}) {
               </div>
               <button
                 type="button"
-                className="text-xs text-primary hover:underline font-medium focus-visible:outline-none"
+                className="text-xs text-primary hover:underline font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm"
               >
                 Open Notebook
               </button>
             </CardHeader>
             <CardContent className="space-y-3">
               {mockNotes.map((note, idx) => (
-                <div
-                  key={note.id}
-                  className="space-y-1 text-start group cursor-pointer"
-                >
-                  <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-medium text-text-primary group-hover:text-primary transition-colors truncate">
-                      {note.title}
-                    </h4>
-                    <span className="text-[11px] text-text-secondary shrink-0 ms-2">
-                      {note.updatedAt}
-                    </span>
-                  </div>
-                  <p className="text-xs text-text-secondary-accessible line-clamp-1 leading-relaxed">
-                    {note.snippet}
-                  </p>
-                  {idx < mockNotes.length - 1 && <Separator className="my-2" />}
+                <div key={note.id}>
+                  <button
+                    type="button"
+                    className="w-full text-start space-y-1 p-2 -mx-2 rounded-lg transition-colors hover:bg-surface-secondary/60 focus-visible:bg-surface-secondary/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 block group"
+                  >
+                    <div className="flex items-center justify-between">
+                      <h4 className="text-sm font-medium text-text-primary group-hover:text-primary transition-colors truncate">
+                        {note.title}
+                      </h4>
+                      <span className="text-[11px] text-text-secondary shrink-0 ms-2">
+                        {note.updatedAt}
+                      </span>
+                    </div>
+                    <p className="text-xs text-text-secondary-accessible line-clamp-1 leading-relaxed">
+                      {note.snippet}
+                    </p>
+                  </button>
+                  {idx < mockNotes.length - 1 && <Separator className="my-1.5" />}
                 </div>
               ))}
             </CardContent>

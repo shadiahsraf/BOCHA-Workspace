@@ -5,8 +5,11 @@ import { safeRawStorage } from './storage/safeRawStorage';
 
 export interface LayoutState {
   isSidebarCollapsed: boolean;
+  isMobileSidebarOpen: boolean;
   toggleSidebar: () => void;
   setSidebarCollapsed: (collapsed: boolean) => void;
+  toggleMobileSidebar: () => void;
+  setMobileSidebarOpen: (open: boolean) => void;
 }
 
 export interface PersistedLayoutState {
@@ -29,6 +32,7 @@ export const useLayoutStore = create<LayoutState>()(
   persist(
     (set) => ({
       isSidebarCollapsed: false,
+      isMobileSidebarOpen: false,
 
       toggleSidebar: () => {
         set((state) => ({ isSidebarCollapsed: !state.isSidebarCollapsed }));
@@ -36,6 +40,14 @@ export const useLayoutStore = create<LayoutState>()(
 
       setSidebarCollapsed: (isSidebarCollapsed: boolean) => {
         set({ isSidebarCollapsed });
+      },
+
+      toggleMobileSidebar: () => {
+        set((state) => ({ isMobileSidebarOpen: !state.isMobileSidebarOpen }));
+      },
+
+      setMobileSidebarOpen: (isMobileSidebarOpen: boolean) => {
+        set({ isMobileSidebarOpen });
       },
     }),
     {
@@ -52,11 +64,13 @@ export const useLayoutStore = create<LayoutState>()(
           return {
             ...currentState,
             isSidebarCollapsed: persistedState.isSidebarCollapsed,
+            isMobileSidebarOpen: false,
           };
         }
         return {
           ...currentState,
           isSidebarCollapsed: false,
+          isMobileSidebarOpen: false,
         };
       },
     }

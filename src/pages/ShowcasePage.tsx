@@ -611,7 +611,7 @@ export function ShowcasePage() {
             </div>
 
             {/* Arabic Weights */}
-            <div className="p-6 rounded-xl border border-border bg-surface space-y-4 text-right" dir="rtl">
+            <div className="p-6 rounded-xl border border-border bg-surface space-y-4 text-start" dir="rtl">
               <span className="text-xs font-mono text-primary font-semibold block" dir="ltr">IBM Plex Sans Arabic (Arabic &amp; Latin)</span>
               <p className="font-arabic text-base leading-arabic-base font-normal">الوزن ٤٠٠ (عادي): منصة الإنتاجية الشخصية الذكية</p>
               <p className="font-arabic text-base leading-arabic-base font-medium">الوزن ٥٠٠ (متوسط): عناصر التنقل وتسميات الأزرار</p>

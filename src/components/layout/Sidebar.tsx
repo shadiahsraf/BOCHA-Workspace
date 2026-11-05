@@ -36,18 +36,39 @@ const navItems: NavItem[] = [
 
 export interface SidebarProps {
   collapsed?: boolean;
+  mobileOpen?: boolean;
 }
 
-export function Sidebar({ collapsed }: SidebarProps = {}) {
+export function Sidebar({ collapsed, mobileOpen }: SidebarProps = {}) {
   const isStoreCollapsed = useLayoutStore((s) => s.isSidebarCollapsed);
   const isSidebarCollapsed = collapsed !== undefined ? collapsed : isStoreCollapsed;
   const toggleSidebar = useLayoutStore((s) => s.toggleSidebar);
+  const isStoreMobileOpen = useLayoutStore((s) => s.isMobileSidebarOpen);
+  const isMobileSidebarOpen = mobileOpen !== undefined ? mobileOpen : isStoreMobileOpen;
+  const setMobileSidebarOpen = useLayoutStore((s) => s.setMobileSidebarOpen);
+
+  const handleToggle = () => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768 && isMobileSidebarOpen) {
+      setMobileSidebarOpen(false);
+    } else {
+      toggleSidebar();
+    }
+  };
 
   return (
     <aside
+      data-mobile-open={isMobileSidebarOpen}
       className={cn(
-        'h-screen shrink-0 border-e border-border bg-surface z-20 flex flex-col transition-[width] duration-200 ease-in-out motion-reduce:transition-none select-none',
-        isSidebarCollapsed ? 'w-[72px]' : 'w-[250px]'
+        // Base structure
+        'h-screen flex flex-col bg-surface border-e border-border select-none z-50',
+        // Desktop positioning & width transition
+        'md:static md:z-20 md:shrink-0 md:transition-[width] md:duration-200 md:ease-in-out md:translate-x-0',
+        isSidebarCollapsed ? 'md:w-[72px]' : 'md:w-[250px]',
+        // Mobile fixed drawer positioning & slide transition
+        'max-md:fixed max-md:inset-y-0 max-md:start-0 max-md:w-[280px] max-md:shadow-2xl max-md:transition-transform max-md:duration-300 max-md:ease-in-out',
+        isMobileSidebarOpen
+          ? 'max-md:translate-x-0'
+          : 'max-md:-translate-x-full rtl:max-md:translate-x-full'
       )}
       aria-label="Application Sidebar"
     >
@@ -55,29 +76,32 @@ export function Sidebar({ collapsed }: SidebarProps = {}) {
       <div
         className={cn(
           'h-[60px] min-h-[60px] border-b border-border flex items-center px-4',
-          isSidebarCollapsed ? 'justify-center' : 'justify-between'
+          isSidebarCollapsed ? 'max-md:justify-between md:justify-center' : 'justify-between'
         )}
       >
-        {!isSidebarCollapsed && (
-          <div className="flex items-center gap-2.5 overflow-hidden">
-            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-text-primary dark:text-background font-bold text-sm shadow-xs">
-              <Layers className="h-4 w-4" />
-            </div>
-            <div className="flex flex-col overflow-hidden">
-              <span className="text-sm font-bold tracking-tight text-text-primary truncate">
-                LifeOS
-              </span>
-              <span className="text-[10px] text-text-secondary truncate">
-                Productivity Workspace
-              </span>
-            </div>
+        <div
+          className={cn(
+            'flex items-center gap-2.5 overflow-hidden',
+            isSidebarCollapsed && 'md:hidden'
+          )}
+        >
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-text-primary dark:text-background font-bold text-sm shadow-xs">
+            <Layers className="h-4 w-4" />
           </div>
-        )}
+          <div className="flex flex-col overflow-hidden">
+            <span className="text-sm font-bold tracking-tight text-text-primary truncate">
+              LifeOS
+            </span>
+            <span className="text-[10px] text-text-secondary truncate">
+              Productivity Workspace
+            </span>
+          </div>
+        </div>
 
         <IconButton
           variant="ghost"
           size="sm"
-          onClick={toggleSidebar}
+          onClick={handleToggle}
           aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           className="text-text-secondary hover:text-text-primary"
         >
@@ -102,9 +126,10 @@ export function Sidebar({ collapsed }: SidebarProps = {}) {
                     <NavLink
                       to={item.to}
                       end={item.end}
+                      onClick={() => setMobileSidebarOpen(false)}
                       className={({ isActive }) =>
                         cn(
-                          'flex h-10 w-10 mx-auto items-center justify-center rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                          'flex items-center gap-3 px-3 py-2 md:px-0 md:justify-center md:h-10 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
                           isActive
                             ? 'bg-primary-soft text-text-primary dark:text-primary font-medium'
                             : 'text-text-secondary hover:text-text-primary hover:bg-surface-secondary/80'
@@ -112,10 +137,11 @@ export function Sidebar({ collapsed }: SidebarProps = {}) {
                       }
                     >
                       <Icon className="h-4 w-4 shrink-0" />
-                      <span className="sr-only">{item.label}</span>
+                      <span className="truncate md:hidden">{item.label}</span>
+                      <span className="sr-only md:inline-block md:sr-only">{item.label}</span>
                     </NavLink>
                   </TooltipTrigger>
-                  <TooltipContent side="right">
+                  <TooltipContent side="right" className="hidden md:block">
                     <span>{item.label}</span>
                   </TooltipContent>
                 </Tooltip>
@@ -127,6 +153,7 @@ export function Sidebar({ collapsed }: SidebarProps = {}) {
                 key={item.to}
                 to={item.to}
                 end={item.end}
+                onClick={() => setMobileSidebarOpen(false)}
                 className={({ isActive }) =>
                   cn(
                     'flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
@@ -150,14 +177,17 @@ export function Sidebar({ collapsed }: SidebarProps = {}) {
       </TooltipProvider>
 
       {/* Sidebar Footer */}
-      {!isSidebarCollapsed && (
-        <div className="p-3 border-t border-border">
-          <div className="p-2.5 rounded-lg bg-surface-secondary/40 border border-border text-xs text-text-secondary flex flex-col gap-1">
-            <span className="font-medium text-text-primary">LifeOS v0.1.0</span>
-            <span className="text-[11px] text-text-secondary-accessible">Phase 5 Navigation</span>
-          </div>
+      <div
+        className={cn(
+          'p-3 border-t border-border',
+          isSidebarCollapsed && 'md:hidden'
+        )}
+      >
+        <div className="p-2.5 rounded-lg bg-surface-secondary/40 border border-border text-xs text-text-secondary flex flex-col gap-1">
+          <span className="font-medium text-text-primary">LifeOS v0.1.0</span>
+          <span className="text-[11px] text-text-secondary-accessible">Phase 5 Navigation</span>
         </div>
-      )}
+      </div>
     </aside>
   );
 }
