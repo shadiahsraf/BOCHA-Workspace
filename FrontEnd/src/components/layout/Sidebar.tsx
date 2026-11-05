@@ -26,9 +26,10 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: 'Dashboard', to: '/', icon: LayoutDashboard, end: true },
-  { label: 'Inbox', to: '/inbox', icon: Inbox, badge: '3' },
+  { label: 'Projects', to: '/projects', icon: Layers },
   { label: 'Tasks', to: '/tasks', icon: CheckSquare },
   { label: 'Notes', to: '/notes', icon: Notebook },
+  { label: 'Inbox', to: '/inbox', icon: Inbox, badge: '3' },
   { label: 'Calendar', to: '/calendar', icon: Calendar },
   { label: 'Design System', to: '/showcase', icon: Palette },
   { label: 'Settings', to: '/settings', icon: Settings },

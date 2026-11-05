@@ -45,18 +45,22 @@ export interface TaskItem {
   title: string;
   completed: boolean;
   dueDate: string;
+  rawDueDate?: string | null;
   priority: 'urgent' | 'high' | 'medium' | 'low';
   project: string;
+  projectId?: number | null;
 }
 
 export interface ProjectItem {
   id: number | string;
   title: string;
   category: string;
+  description?: string;
   progress: number;
   tasksCompleted: number;
   tasksTotal: number;
   dueDate: string;
+  rawDueDate?: string | null;
 }
 
 export interface NoteItem {
@@ -74,4 +78,30 @@ export interface MetricItem {
   change: string;
   trend: 'up' | 'down' | 'neutral';
   icon: React.ComponentType<{ className?: string }>;
+}
+
+export interface CreateProjectPayload {
+  title: string;
+  category?: string;
+  description?: string;
+  due_date?: string | null;
+}
+
+export interface UpdateProjectPayload extends Partial<CreateProjectPayload> {}
+
+export interface CreateTaskPayload {
+  title: string;
+  priority?: 'urgent' | 'high' | 'medium' | 'low';
+  completed?: boolean;
+  due_date?: string | null;
+  project?: number | null;
+}
+
+export interface UpdateTaskPayload extends Partial<CreateTaskPayload> {}
+
+export interface TaskFilterParams {
+  completed?: boolean;
+  priority?: string;
+  project?: number | string;
+  search?: string;
 }

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Sparkles,
   CheckSquare,
@@ -70,6 +71,7 @@ export interface DashboardPageProps {
 }
 
 export function DashboardPage({ locale: localeProp }: DashboardPageProps = {}) {
+  const navigate = useNavigate();
   const storeLocale = useLocaleStore((s) => s.locale);
   const locale = localeProp ?? storeLocale;
   const [aiPrompt, setAiPrompt] = useState('');
@@ -245,7 +247,12 @@ export function DashboardPage({ locale: localeProp }: DashboardPageProps = {}) {
                     : `${completedCount} of ${tasks.length} tasks completed`}
                 </CardDescription>
               </div>
-              <Button size="sm" variant="outline" className="h-8 text-xs gap-1.5">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => navigate('/tasks')}
+                className="h-8 text-xs gap-1.5"
+              >
                 <Plus className="h-3.5 w-3.5" />
                 <span>New Task</span>
               </Button>
@@ -324,7 +331,8 @@ export function DashboardPage({ locale: localeProp }: DashboardPageProps = {}) {
               <span>Focus tasks synced via REST API</span>
               <button
                 type="button"
-                className="text-primary hover:underline font-medium text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm"
+                onClick={() => navigate('/tasks')}
+                className="text-primary hover:underline font-medium text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-sm cursor-pointer"
               >
                 View all tasks →
               </button>
@@ -343,9 +351,13 @@ export function DashboardPage({ locale: localeProp }: DashboardPageProps = {}) {
                   Milestones and initiatives in flight
                 </CardDescription>
               </div>
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary-soft text-text-primary dark:text-primary border border-primary/20">
-                {isLoading ? '...' : `${projects.length} active`}
-              </span>
+              <button
+                type="button"
+                onClick={() => navigate('/projects')}
+                className="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary-soft text-text-primary dark:text-primary border border-primary/20 hover:border-primary/40 transition-colors cursor-pointer"
+              >
+                {isLoading ? '...' : `${projects.length} active →`}
+              </button>
             </CardHeader>
             <CardContent className="space-y-4">
               {isLoading ? (

@@ -4,6 +4,8 @@ import { AppProviders } from '@/app/providers';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { DashboardPage } from '@/pages/DashboardPage';
+import { ProjectsPage } from '@/pages/ProjectsPage';
+import { TasksPage } from '@/pages/TasksPage';
 import { ShowcasePage } from '@/pages/ShowcasePage';
 import { LoginPage } from '@/pages/LoginPage';
 import { RegisterPage } from '@/pages/RegisterPage';
@@ -44,6 +46,8 @@ export function App() {
           <Route element={<ProtectedRoute />}>
             <Route element={<AppLayout />}>
               <Route path="/" element={<DashboardPage />} />
+              <Route path="/projects" element={<ProjectsPage />} />
+              <Route path="/tasks" element={<TasksPage />} />
               <Route path="/showcase" element={<ShowcasePage />} />
             </Route>
           </Route>
