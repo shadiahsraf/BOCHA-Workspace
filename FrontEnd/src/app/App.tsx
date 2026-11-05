@@ -5,6 +5,7 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { DashboardPage } from '@/pages/DashboardPage';
 import { InboxPage } from '@/pages/InboxPage';
+import { AgentPage } from '@/pages/AgentPage';
 import { ProjectsPage } from '@/pages/ProjectsPage';
 import { TasksPage } from '@/pages/TasksPage';
 import { NotesPage } from '@/pages/NotesPage';
@@ -51,6 +52,7 @@ export function App() {
             <Route element={<AppLayout />}>
               <Route path="/" element={<DashboardPage />} />
               <Route path="/inbox" element={<InboxPage />} />
+              <Route path="/agent" element={<AgentPage />} />
               <Route path="/projects" element={<ProjectsPage />} />
               <Route path="/tasks" element={<TasksPage />} />
               <Route path="/notes" element={<NotesPage />} />

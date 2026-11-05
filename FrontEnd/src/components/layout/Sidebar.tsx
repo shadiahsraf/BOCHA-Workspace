@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom';
 import {
   LayoutDashboard,
   Inbox,
+  Sparkles,
   CheckSquare,
   BookOpen,
   Calendar,
@@ -27,6 +28,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { label: 'Dashboard', to: '/', icon: LayoutDashboard, end: true },
   { label: 'Inbox', to: '/inbox', icon: Inbox },
+  { label: 'AI Agent', to: '/agent', icon: Sparkles },
   { label: 'Projects', to: '/projects', icon: Layers },
   { label: 'Tasks', to: '/tasks', icon: CheckSquare },
   { label: 'Notes', to: '/notes', icon: BookOpen },

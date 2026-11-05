@@ -77,7 +77,12 @@ export function Topbar() {
         </button>
 
         {/* AI Assistant Button */}
-        <Button variant="primary" size="sm" className="shadow-xs gap-1.5">
+        <Button
+          variant="primary"
+          size="sm"
+          onClick={() => navigate('/agent')}
+          className="shadow-xs gap-1.5"
+        >
           <Sparkles className="h-4 w-4" />
           <span className="hidden sm:inline">AI Assistant</span>
         </Button>

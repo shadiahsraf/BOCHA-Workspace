@@ -1,7 +1,8 @@
-from rest_framework import generics, permissions, status, viewsets, filters
+from rest_framework import generics, permissions, status, viewsets, filters, views
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
+from asgiref.sync import async_to_sync
 
 from .models import User, InboxItem
 from .serializers import (
@@ -11,6 +12,7 @@ from .serializers import (
     ChangePasswordSerializer,
     InboxItemSerializer,
 )
+from .ai_service import chat_with_agent_async, generate_5_pillar_persona
 
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -99,3 +101,37 @@ class ChangePasswordView(generics.GenericAPIView):
             {'detail': 'Password changed successfully.'},
             status=status.HTTP_200_OK,
         )
+
+
+class AgentChatView(views.APIView):
+    """
+    API endpoint to communicate with the Agentic AI.
+    Executes Gemini function calling tools scoped strictly to request.user.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        message = request.data.get('message', '').strip()
+        history = request.data.get('history', [])
+        if not message:
+            return Response(
+                {'detail': 'Message content cannot be empty.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Execute async AI service safely within DRF view
+        result = async_to_sync(chat_with_agent_async)(request.user, message, history)
+        return Response(result, status=status.HTTP_200_OK)
+
+
+class PersonaGeneratorView(views.APIView):
+    """
+    API endpoint generating a rich 5-Pillar Markdown prompt
+    summarizing the authenticated user's workspace state.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        data = generate_5_pillar_persona(request.user)
+        return Response(data, status=status.HTTP_200_OK)
+

@@ -128,6 +128,7 @@ export interface BackendUserProfile {
   username: string;
   preferred_language: 'en' | 'ar';
   preferred_theme: 'light' | 'dark' | 'system';
+  bio?: string | null;
 }
 
 export interface BackendInboxItem {
@@ -148,5 +149,28 @@ export interface InboxItem {
 export interface CreateInboxPayload {
   text: string;
 }
+
+export interface AgentChatMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: string;
+}
+
+export interface AgentChatResponse {
+  reply: string;
+  history?: Array<{ role: string; parts: string[] }>;
+}
+
+export interface PersonaResponse {
+  persona_prompt: string;
+  stats: {
+    projects_count: number;
+    pending_tasks_count: number;
+    inbox_items_count: number;
+    notes_count: number;
+  };
+}
+
 
 

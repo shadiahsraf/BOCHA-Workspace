@@ -20,6 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
             'username',
             'preferred_language',
             'preferred_theme',
+            'bio',
         ]
         read_only_fields = ['id']
 
@@ -34,6 +35,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token['username'] = user.username
         token['preferred_language'] = user.preferred_language
         token['preferred_theme'] = user.preferred_theme
+        token['bio'] = user.bio or ''
         return token
 
     def validate(self, attrs):
@@ -44,6 +46,7 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             'username': self.user.username,
             'preferred_language': self.user.preferred_language,
             'preferred_theme': self.user.preferred_theme,
+            'bio': self.user.bio or '',
         }
         return data
 

@@ -17,6 +17,9 @@ export const userService = {
     if (payload.preferredTheme !== undefined) {
       backendData.preferred_theme = payload.preferredTheme;
     }
+    if (payload.bio !== undefined) {
+      backendData.bio = payload.bio;
+    }
 
     const response = await api.patch<BackendUserProfile>('users/me/', backendData);
     const data = response.data;
@@ -27,6 +30,7 @@ export const userService = {
       username: data.username,
       preferredLanguage: data.preferred_language || 'en',
       preferredTheme: data.preferred_theme || 'system',
+      bio: data.bio || '',
     };
   },
 

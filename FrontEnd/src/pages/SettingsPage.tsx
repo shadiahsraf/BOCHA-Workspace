@@ -25,6 +25,7 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
@@ -58,6 +59,7 @@ export function SettingsPage() {
   // Tab 1: Profile State
   const [username, setUsername] = useState(user?.username || '');
   const [email, setEmail] = useState(user?.email || '');
+  const [bio, setBio] = useState(user?.bio || '');
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileSuccess, setProfileSuccess] = useState<string | null>(null);
   const [profileError, setProfileError] = useState<string | null>(null);
@@ -100,6 +102,7 @@ export function SettingsPage() {
       const updated = await userService.updateProfile({
         username: username.trim(),
         email: email.trim(),
+        bio: bio.trim(),
       });
       updateUser(updated);
       setProfileSuccess('Profile updated successfully.');
@@ -286,6 +289,28 @@ export function SettingsPage() {
                       disabled={profileLoading}
                     />
                   </div>
+                </div>
+
+                {/* Professional Bio & Skills for AI Planner-Executor */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="settings-bio" className="text-sm font-medium text-text-primary">
+                      Professional Bio, Skills & Working Style
+                    </label>
+                    <span className="text-xs text-text-secondary">Used by LifeOS AI Planner</span>
+                  </div>
+                  <Textarea
+                    id="settings-bio"
+                    value={bio}
+                    onChange={(e) => setBio(e.target.value)}
+                    placeholder="e.g. Senior Software Engineer specializing in Python and React. Prefers deep work mornings, 45-min Pomodoro sprints, and breaking epics into atomic daily tasks."
+                    rows={4}
+                    disabled={profileLoading}
+                    className="resize-y"
+                  />
+                  <p className="text-xs text-text-secondary">
+                    The internal LifeOS AI Agent acts as your Planner and Executor, tailoring project breakdowns and schedules around your skills and preferences.
+                  </p>
                 </div>
               </CardContent>
 

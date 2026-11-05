@@ -74,6 +74,7 @@ class AuthenticationAPITests(APITestCase):
             'username': 'alex_new',
             'preferred_language': 'ar',
             'preferred_theme': 'light',
+            'bio': 'Senior Software Engineer specializing in Python & React.',
         }
         res = self.client.patch(reverse('current-user'), payload)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
@@ -81,12 +82,14 @@ class AuthenticationAPITests(APITestCase):
         self.assertEqual(res.data['username'], 'alex_new')
         self.assertEqual(res.data['preferred_language'], 'ar')
         self.assertEqual(res.data['preferred_theme'], 'light')
+        self.assertEqual(res.data['bio'], 'Senior Software Engineer specializing in Python & React.')
 
         self.user.refresh_from_db()
         self.assertEqual(self.user.email, 'alex_updated@lifeos.app')
         self.assertEqual(self.user.username, 'alex_new')
         self.assertEqual(self.user.preferred_language, 'ar')
         self.assertEqual(self.user.preferred_theme, 'light')
+        self.assertEqual(self.user.bio, 'Senior Software Engineer specializing in Python & React.')
 
     def test_change_password_success(self):
         self.client.force_authenticate(user=self.user)
@@ -174,5 +177,46 @@ class InboxAPITests(APITestCase):
         list_res = self.client.get('/api/inbox/')
         results = list_res.data.get('results', list_res.data)
         self.assertEqual(len(results), 0)
+
+
+class AgentAPITests(APITestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            email='agentuser@lifeos.app',
+            username='agentuser',
+            password='password123',
+            preferred_language='en',
+            preferred_theme='dark',
+        )
+
+    def test_agent_chat_unauthenticated(self):
+        res = self.client.post('/api/agent/chat/', {'message': 'Hello'})
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_agent_chat_empty_message(self):
+        self.client.force_authenticate(user=self.user)
+        res = self.client.post('/api/agent/chat/', {'message': ''})
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_persona_generator_authenticated(self):
+        self.client.force_authenticate(user=self.user)
+        res = self.client.get('/api/agent/persona/')
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertIn('persona_prompt', res.data)
+        self.assertIn('stats', res.data)
+
+        prompt = res.data['persona_prompt']
+        # Verify 5 Pillars are present
+        self.assertIn('1. INSTRUCTIONS & ROLE', prompt)
+        self.assertIn('2. CONTEXT (WORKSPACE STATE)', prompt)
+        self.assertIn('3. EXAMPLES & INTERACTION PATTERNS', prompt)
+        self.assertIn('4. CONSTRAINTS & PRINCIPLES', prompt)
+        self.assertIn('5. OUTPUT FORMAT', prompt)
+        self.assertIn('agentuser', prompt)
+
+    def test_persona_generator_unauthenticated(self):
+        res = self.client.get('/api/agent/persona/')
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
 
 

@@ -9,6 +9,7 @@ export interface UserProfile {
   username: string;
   preferredLanguage: 'en' | 'ar';
   preferredTheme: 'light' | 'dark' | 'system';
+  bio?: string;
 }
 
 export interface RegisterPayload {
@@ -95,6 +96,7 @@ export const useAuthStore = create<AuthState>()(
             username: rawUser.username,
             preferredLanguage: rawUser.preferred_language || 'en',
             preferredTheme: rawUser.preferred_theme || 'system',
+            bio: rawUser.bio || '',
           };
 
           set({
@@ -129,6 +131,7 @@ export const useAuthStore = create<AuthState>()(
             username: rawUser.username,
             preferredLanguage: rawUser.preferred_language || 'en',
             preferredTheme: rawUser.preferred_theme || 'system',
+            bio: rawUser.bio || '',
           };
 
           set({

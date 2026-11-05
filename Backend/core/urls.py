@@ -7,6 +7,8 @@ from .views import (
     CurrentUserView,
     ChangePasswordView,
     InboxItemViewSet,
+    AgentChatView,
+    PersonaGeneratorView,
 )
 
 router = DefaultRouter()
@@ -18,5 +20,7 @@ urlpatterns = [
     path('auth/register/', RegisterView.as_view(), name='auth-register'),
     path('users/me/', CurrentUserView.as_view(), name='current-user'),
     path('users/change-password/', ChangePasswordView.as_view(), name='change-password'),
+    path('agent/chat/', AgentChatView.as_view(), name='agent-chat'),
+    path('agent/persona/', PersonaGeneratorView.as_view(), name='agent-persona'),
     path('', include(router.urls)),
 ]
