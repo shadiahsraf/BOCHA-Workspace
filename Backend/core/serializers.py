@@ -1,3 +1,4 @@
+from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from .models import User
@@ -13,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
             'preferred_language',
             'preferred_theme',
         ]
-        read_only_fields = ['id', 'email']
+        read_only_fields = ['id']
 
 
 class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
@@ -91,3 +92,24 @@ class RegisterSerializer(serializers.ModelSerializer):
             preferred_theme=preferred_theme,
         )
         return user
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    """Serializer for password change endpoint."""
+    old_password = serializers.CharField(required=True, write_only=True)
+    new_password = serializers.CharField(required=True, write_only=True, min_length=8)
+    confirm_password = serializers.CharField(required=True, write_only=True)
+
+    def validate_old_password(self, value):
+        user = self.context['request'].user
+        if not user.check_password(value):
+            raise serializers.ValidationError('Old password is incorrect.')
+        return value
+
+    def validate(self, attrs):
+        if attrs['new_password'] != attrs['confirm_password']:
+            raise serializers.ValidationError({'confirm_password': 'New passwords do not match.'})
+        user = self.context['request'].user
+        validate_password(attrs['new_password'], user=user)
+        return attrs
+

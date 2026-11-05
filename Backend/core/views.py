@@ -8,6 +8,7 @@ from .serializers import (
     UserSerializer,
     CustomTokenObtainPairSerializer,
     RegisterSerializer,
+    ChangePasswordSerializer,
 )
 
 
@@ -60,3 +61,22 @@ class CurrentUserView(generics.RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class ChangePasswordView(generics.GenericAPIView):
+    """
+    API endpoint for authenticated users to change their password.
+    """
+    serializer_class = ChangePasswordSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = request.user
+        user.set_password(serializer.validated_data['new_password'])
+        user.save()
+        return Response(
+            {'detail': 'Password changed successfully.'},
+            status=status.HTTP_200_OK,
+        )

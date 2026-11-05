@@ -66,3 +66,61 @@ class AuthenticationAPITests(APITestCase):
         res = self.client.get(reverse('current-user'))
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertEqual(res.data['email'], 'alex@lifeos.app')
+
+    def test_update_user_profile(self):
+        self.client.force_authenticate(user=self.user)
+        payload = {
+            'email': 'alex_updated@lifeos.app',
+            'username': 'alex_new',
+            'preferred_language': 'ar',
+            'preferred_theme': 'light',
+        }
+        res = self.client.patch(reverse('current-user'), payload)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data['email'], 'alex_updated@lifeos.app')
+        self.assertEqual(res.data['username'], 'alex_new')
+        self.assertEqual(res.data['preferred_language'], 'ar')
+        self.assertEqual(res.data['preferred_theme'], 'light')
+
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.email, 'alex_updated@lifeos.app')
+        self.assertEqual(self.user.username, 'alex_new')
+        self.assertEqual(self.user.preferred_language, 'ar')
+        self.assertEqual(self.user.preferred_theme, 'light')
+
+    def test_change_password_success(self):
+        self.client.force_authenticate(user=self.user)
+        payload = {
+            'old_password': 'password123',
+            'new_password': 'NewSecurePassword2026!',
+            'confirm_password': 'NewSecurePassword2026!',
+        }
+        res = self.client.post(reverse('change-password'), payload)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data['detail'], 'Password changed successfully.')
+
+        self.user.refresh_from_db()
+        self.assertTrue(self.user.check_password('NewSecurePassword2026!'))
+
+    def test_change_password_wrong_old_password(self):
+        self.client.force_authenticate(user=self.user)
+        payload = {
+            'old_password': 'wrongpassword',
+            'new_password': 'NewSecurePassword2026!',
+            'confirm_password': 'NewSecurePassword2026!',
+        }
+        res = self.client.post(reverse('change-password'), payload)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('old_password', res.data)
+
+    def test_change_password_mismatch(self):
+        self.client.force_authenticate(user=self.user)
+        payload = {
+            'old_password': 'password123',
+            'new_password': 'NewSecurePassword2026!',
+            'confirm_password': 'DifferentPassword2026!',
+        }
+        res = self.client.post(reverse('change-password'), payload)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('confirm_password', res.data)
+

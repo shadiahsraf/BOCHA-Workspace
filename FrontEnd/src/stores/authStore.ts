@@ -32,6 +32,7 @@ export interface AuthState extends PersistedAuthState {
   error: string | null;
   setAuth: (tokens: { access: string; refresh?: string }, user?: UserProfile) => void;
   setUser: (user: UserProfile) => void;
+  updateUser: (userData: Partial<UserProfile>) => void;
   login: (credentials: { email: string; password: string }) => Promise<void>;
   register: (payload: RegisterPayload) => Promise<void>;
   logout: () => void;
@@ -72,6 +73,12 @@ export const useAuthStore = create<AuthState>()(
 
       setUser: (user) => {
         set({ user });
+      },
+
+      updateUser: (userData) => {
+        set((state) => ({
+          user: state.user ? { ...state.user, ...userData } : null,
+        }));
       },
 
       login: async (credentials) => {

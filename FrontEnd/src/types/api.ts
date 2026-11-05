@@ -115,3 +115,18 @@ export interface TaskFilterParams {
   project?: number | string;
   search?: string;
 }
+
+export interface ChangePasswordPayload {
+  old_password: string;
+  new_password: string;
+  confirm_password: string;
+}
+
+export interface BackendUserProfile {
+  id: number | string;
+  email: string;
+  username: string;
+  preferred_language: 'en' | 'ar';
+  preferred_theme: 'light' | 'dark' | 'system';
+}
+

@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { Search, Sparkles, User, Settings, LogOut, Sun, Moon, Laptop, Globe, Menu } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { IconButton } from '@/components/ui/icon-button';
@@ -18,6 +19,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { useTranslation } from '@/i18n/useTranslation';
 
 export function Topbar() {
+  const navigate = useNavigate();
   const theme = useThemeStore((s) => s.theme);
   const setTheme = useThemeStore((s) => s.setTheme);
   const locale = useLocaleStore((s) => s.locale);
@@ -108,11 +110,11 @@ export function Topbar() {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate('/settings')}>
               <User className="me-2 h-4 w-4" />
               <span>Profile</span>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={() => navigate('/settings')}>
               <Settings className="me-2 h-4 w-4" />
               <span>Settings</span>
             </DropdownMenuItem>
