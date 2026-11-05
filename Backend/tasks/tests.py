@@ -14,8 +14,14 @@ class TaskAndProjectAPITests(APITestCase):
         )
         self.client.force_authenticate(user=self.user)
 
+    def test_unauthenticated_access_rejected(self):
+        self.client.logout()
+        res = self.client.get(reverse('project-list'))
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+        res = self.client.get(reverse('task-list'))
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
     def test_project_crud_and_computed_properties(self):
-        # 1. Create project
         create_res = self.client.post(reverse('project-list'), {
             'title': 'Design System',
             'category': 'Design',
@@ -26,7 +32,6 @@ class TaskAndProjectAPITests(APITestCase):
         self.assertEqual(create_res.data['tasks_total'], 0)
         self.assertEqual(create_res.data['tasks_completed'], 0)
 
-        # 2. Create tasks under project
         task1_res = self.client.post(reverse('task-list'), {
             'title': 'Component Audit',
             'project': project_id,
@@ -44,7 +49,6 @@ class TaskAndProjectAPITests(APITestCase):
         })
         self.assertEqual(task2_res.status_code, status.HTTP_201_CREATED)
 
-        # 3. Retrieve project and verify progress (1 of 2 = 50%)
         get_res = self.client.get(reverse('project-detail', args=[project_id]))
         self.assertEqual(get_res.status_code, status.HTTP_200_OK)
         self.assertEqual(get_res.data['progress'], 50)

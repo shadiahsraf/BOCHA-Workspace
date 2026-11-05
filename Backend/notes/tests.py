@@ -14,6 +14,11 @@ class NoteAPITests(APITestCase):
         )
         self.client.force_authenticate(user=self.user)
 
+    def test_unauthenticated_access_rejected(self):
+        self.client.logout()
+        res = self.client.get(reverse('note-list'))
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
     def test_note_crud_and_snippet(self):
         long_content = "LifeOS architecture documentation covering data models, DRF serializers, viewsets, and REST endpoints for monorepo frontend integration."
         create_res = self.client.post(reverse('note-list'), {

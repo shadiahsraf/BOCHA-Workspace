@@ -14,6 +14,7 @@ import {
 import { useThemeStore } from '@/stores/themeStore';
 import { useLocaleStore } from '@/stores/localeStore';
 import { useLayoutStore } from '@/stores/layoutStore';
+import { useAuthStore } from '@/stores/authStore';
 import { useTranslation } from '@/i18n/useTranslation';
 
 export function Topbar() {
@@ -22,7 +23,15 @@ export function Topbar() {
   const locale = useLocaleStore((s) => s.locale);
   const setLocale = useLocaleStore((s) => s.setLocale);
   const toggleMobileSidebar = useLayoutStore((s) => s.toggleMobileSidebar);
+  const user = useAuthStore((s) => s.user);
+  const logout = useAuthStore((s) => s.logout);
   const { t } = useTranslation();
+
+  const userInitials = user?.username
+    ? user.username.slice(0, 2).toUpperCase()
+    : user?.email
+    ? user.email.slice(0, 2).toUpperCase()
+    : 'LO';
 
   return (
     <header className="h-[60px] min-h-[60px] flex items-center justify-between border-b border-border bg-surface px-4 lg:px-6 z-10 shrink-0">
@@ -82,7 +91,7 @@ export function Topbar() {
               <Avatar className="h-8 w-8 cursor-pointer ring-1 ring-border hover:ring-primary transition-all">
                 <AvatarImage src="" alt="User avatar" />
                 <AvatarFallback className="text-xs font-semibold bg-surface-secondary text-text-primary">
-                  LO
+                  {userInitials}
                 </AvatarFallback>
               </Avatar>
             </button>
@@ -90,8 +99,12 @@ export function Topbar() {
           <DropdownMenuContent align="end" className="w-56">
             <DropdownMenuLabel>
               <div className="flex flex-col space-y-0.5">
-                <span className="text-sm font-medium text-text-primary">LifeOS User</span>
-                <span className="text-xs text-text-secondary truncate">user@lifeos.local</span>
+                <span className="text-sm font-medium text-text-primary">
+                  {user?.username || 'LifeOS User'}
+                </span>
+                <span className="text-xs text-text-secondary truncate">
+                  {user?.email || 'user@lifeos.app'}
+                </span>
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
@@ -127,9 +140,12 @@ export function Topbar() {
               <span className="capitalize">Theme: {theme}</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-destructive focus:text-destructive">
+            <DropdownMenuItem
+              onClick={() => logout()}
+              className="text-destructive focus:text-destructive cursor-pointer"
+            >
               <LogOut className="me-2 h-4 w-4" />
-              <span>Log out</span>
+              <span>Sign out</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

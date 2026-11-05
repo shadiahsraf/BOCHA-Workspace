@@ -1,53 +1,62 @@
-from rest_framework import generics, permissions, viewsets, filters
+from rest_framework import generics, permissions, status, viewsets, filters
+from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
+
 from .models import User
-from .serializers import UserSerializer
+from .serializers import (
+    UserSerializer,
+    CustomTokenObtainPairSerializer,
+    RegisterSerializer,
+)
 
 
-def get_or_create_fallback_user() -> User:
-    """Helper to return an existing user or create a fallback demo user."""
-    user = User.objects.first()
-    if not user:
-        user = User.objects.create_user(
-            email='demo@lifeos.app',
-            username='demo',
-            password='demopassword123',
+class CustomTokenObtainPairView(TokenObtainPairView):
+    """Token obtain view returning access, refresh, and user profile metadata."""
+    serializer_class = CustomTokenObtainPairSerializer
+
+
+class RegisterView(generics.CreateAPIView):
+    """Public registration endpoint that creates user and returns JWT tokens."""
+    serializer_class = RegisterSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        refresh = RefreshToken.for_user(user)
+        return Response(
+            {
+                'user': UserSerializer(user).data,
+                'access': str(refresh.access_token),
+                'refresh': str(refresh),
+            },
+            status=status.HTTP_201_CREATED,
         )
-    return user
 
 
 class BaseUserScopedViewSet(viewsets.ModelViewSet):
     """
-    Base ModelViewSet that scopes queries to the authenticated user.
-    Falls back gracefully during initial development if unauthenticated.
+    Base ModelViewSet that strictly enforces authentication and scopes
+    all operations to the currently authenticated user.
     """
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
 
     def get_queryset(self):
-        user = self.request.user
-        if user.is_authenticated:
-            return self.queryset.filter(user=user)
-        return self.queryset.all()
+        return self.queryset.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        user = self.request.user
-        if user.is_authenticated:
-            serializer.save(user=user)
-        else:
-            fallback_user = get_or_create_fallback_user()
-            serializer.save(user=fallback_user)
+        serializer.save(user=self.request.user)
 
 
 class CurrentUserView(generics.RetrieveUpdateAPIView):
     """
-    API endpoint to retrieve or update the currently logged-in user profile.
-    Falls back to a demo user when unauthenticated during initial development.
+    API endpoint to retrieve or update the authenticated user's profile.
     """
     serializer_class = UserSerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_object(self):
-        user = self.request.user
-        if user.is_authenticated:
-            return user
-        return get_or_create_fallback_user()
+        return self.request.user
