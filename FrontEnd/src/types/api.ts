@@ -66,8 +66,10 @@ export interface ProjectItem {
 export interface NoteItem {
   id: number | string;
   title: string;
+  content: string;
   snippet: string;
   updatedAt: string;
+  rawUpdatedAt?: string;
   category: string;
 }
 
@@ -79,6 +81,14 @@ export interface MetricItem {
   trend: 'up' | 'down' | 'neutral';
   icon: React.ComponentType<{ className?: string }>;
 }
+
+export interface CreateNotePayload {
+  title: string;
+  content?: string;
+  category?: string;
+}
+
+export interface UpdateNotePayload extends Partial<CreateNotePayload> {}
 
 export interface CreateProjectPayload {
   title: string;

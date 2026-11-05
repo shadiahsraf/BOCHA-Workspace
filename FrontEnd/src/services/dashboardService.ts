@@ -74,8 +74,10 @@ export async function fetchNotes(): Promise<NoteItem[]> {
   return rawList.map((n) => ({
     id: n.id,
     title: n.title,
+    content: n.content || '',
     snippet: n.snippet || (n.content ? n.content.slice(0, 100) : ''),
     updatedAt: formatRelativeTime(n.updated_at),
+    rawUpdatedAt: n.updated_at,
     category: n.category,
   }));
 }
