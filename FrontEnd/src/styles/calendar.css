@@ -1,0 +1,219 @@
+@import 'react-big-calendar/lib/css/react-big-calendar.css';
+
+/* ==========================================================================
+   LifeOS Adaptive Calendar Overrides (react-big-calendar)
+   Aligns grid, headers, cells, and toolbar with Light/Dark Design Tokens.
+   ========================================================================== */
+
+.lifeos-calendar {
+  width: 100%;
+  font-family: inherit;
+  color: rgb(var(--color-text-primary));
+}
+
+.lifeos-calendar .rbc-calendar {
+  background-color: transparent;
+}
+
+/* Container & Grids */
+.lifeos-calendar .rbc-month-view,
+.lifeos-calendar .rbc-time-view,
+.lifeos-calendar .rbc-agenda-view {
+  border: 1px solid rgb(var(--color-border));
+  border-radius: var(--radius-lg);
+  background-color: rgb(var(--color-surface));
+  overflow: hidden;
+}
+
+/* Headers */
+.lifeos-calendar .rbc-header {
+  border-bottom: 1px solid rgb(var(--color-border));
+  color: rgb(var(--color-text-secondary));
+  font-weight: 600;
+  font-size: 0.8125rem;
+  padding: 10px 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: rgb(var(--color-surface));
+}
+
+.lifeos-calendar .rbc-header + .rbc-header {
+  border-left: 1px solid rgb(var(--color-border));
+}
+
+[dir='rtl'] .lifeos-calendar .rbc-header + .rbc-header {
+  border-left: none;
+  border-right: 1px solid rgb(var(--color-border));
+}
+
+/* Rows and Cells */
+.lifeos-calendar .rbc-month-row + .rbc-month-row {
+  border-top: 1px solid rgb(var(--color-border));
+}
+
+.lifeos-calendar .rbc-day-bg + .rbc-day-bg {
+  border-left: 1px solid rgb(var(--color-border));
+}
+
+[dir='rtl'] .lifeos-calendar .rbc-day-bg + .rbc-day-bg {
+  border-left: none;
+  border-right: 1px solid rgb(var(--color-border));
+}
+
+.lifeos-calendar .rbc-today {
+  background-color: rgb(var(--color-primary-soft) / 0.35);
+}
+
+.lifeos-calendar .rbc-off-range-bg {
+  background-color: rgb(var(--color-surface-secondary) / 0.5);
+  opacity: 0.6;
+}
+
+.lifeos-calendar .rbc-date-cell {
+  padding: 6px 8px;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgb(var(--color-text-primary));
+  text-align: right;
+}
+
+[dir='rtl'] .lifeos-calendar .rbc-date-cell {
+  text-align: left;
+}
+
+.lifeos-calendar .rbc-off-range .rbc-button-link {
+  color: rgb(var(--color-text-secondary));
+  opacity: 0.6;
+}
+
+/* Toolbar & Navigation */
+.lifeos-calendar .rbc-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.lifeos-calendar .rbc-toolbar-label {
+  font-weight: 700;
+  font-size: 1.125rem;
+  color: rgb(var(--color-text-primary));
+}
+
+.lifeos-calendar .rbc-btn-group {
+  display: inline-flex;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-xs);
+}
+
+.lifeos-calendar .rbc-btn-group button {
+  background-color: rgb(var(--color-surface));
+  color: rgb(var(--color-text-primary));
+  border: 1px solid rgb(var(--color-border));
+  padding: 6px 14px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 150ms ease;
+  cursor: pointer;
+}
+
+.lifeos-calendar .rbc-btn-group button + button {
+  border-left: none;
+}
+
+[dir='rtl'] .lifeos-calendar .rbc-btn-group button + button {
+  border-left: 1px solid rgb(var(--color-border));
+  border-right: none;
+}
+
+.lifeos-calendar .rbc-btn-group button:hover {
+  background-color: rgb(var(--color-surface-secondary));
+}
+
+.lifeos-calendar .rbc-btn-group button.rbc-active {
+  background-color: rgb(var(--color-primary));
+  color: #ffffff;
+  border-color: rgb(var(--color-primary));
+}
+
+/* Events */
+.lifeos-calendar .rbc-event {
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: opacity 150ms ease;
+}
+
+.lifeos-calendar .rbc-event:hover {
+  opacity: 0.88;
+}
+
+.lifeos-calendar .rbc-event:focus {
+  outline: 2px solid rgb(var(--color-primary));
+  outline-offset: 1px;
+}
+
+.lifeos-calendar .rbc-show-more {
+  color: rgb(var(--color-primary));
+  font-weight: 600;
+  font-size: 0.75rem;
+  background: transparent;
+  padding: 2px 4px;
+}
+
+/* Time Grid Views (Week & Day) */
+.lifeos-calendar .rbc-time-header {
+  border-bottom: 1px solid rgb(var(--color-border));
+}
+
+.lifeos-calendar .rbc-time-content {
+  border-top: 1px solid rgb(var(--color-border));
+}
+
+.lifeos-calendar .rbc-time-gutter .rbc-timeslot-group {
+  border-bottom: 1px solid rgb(var(--color-border));
+}
+
+.lifeos-calendar .rbc-timeslot-group {
+  border-bottom: 1px solid rgb(var(--color-border));
+  min-height: 48px;
+}
+
+.lifeos-calendar .rbc-day-slot .rbc-time-slot {
+  border-top: 1px solid rgb(var(--color-border) / 0.5);
+}
+
+.lifeos-calendar .rbc-time-view .rbc-day-slot {
+  border-left: 1px solid rgb(var(--color-border));
+}
+
+[dir='rtl'] .lifeos-calendar .rbc-time-view .rbc-day-slot {
+  border-left: none;
+  border-right: 1px solid rgb(var(--color-border));
+}
+
+.lifeos-calendar .rbc-current-time-indicator {
+  background-color: rgb(var(--color-destructive));
+}
+
+/* Agenda View */
+.lifeos-calendar .rbc-agenda-view table.rbc-agenda-table {
+  border-color: rgb(var(--color-border));
+}
+
+.lifeos-calendar .rbc-agenda-view table.rbc-agenda-table thead > tr > th {
+  border-bottom: 1px solid rgb(var(--color-border));
+  color: rgb(var(--color-text-secondary));
+  background-color: rgb(var(--color-surface-secondary));
+}
+
+.lifeos-calendar .rbc-agenda-view table.rbc-agenda-table tbody > tr > td {
+  border-top: 1px solid rgb(var(--color-border));
+  color: rgb(var(--color-text-primary));
+}
