@@ -1,0 +1,25 @@
+# Python / Django
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# SQLite database
+*.sqlite3
+db.sqlite3
+
+# Environment & secrets
+.env
+local_settings.py
+
+# Media & static collected
+media/
+staticfiles/
+
+# Testing & logs
+*.log
+.pytest_cache/
+htmlcov/
+.coverage
