@@ -1,7 +1,14 @@
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import User
+from .models import User, InboxItem
+
+
+class InboxItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InboxItem
+        fields = ['id', 'text', 'is_processed', 'created_at']
+        read_only_fields = ['id', 'created_at']
 
 
 class UserSerializer(serializers.ModelSerializer):

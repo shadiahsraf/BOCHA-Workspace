@@ -130,3 +130,23 @@ export interface BackendUserProfile {
   preferred_theme: 'light' | 'dark' | 'system';
 }
 
+export interface BackendInboxItem {
+  id: number;
+  text: string;
+  is_processed: boolean;
+  created_at: string;
+}
+
+export interface InboxItem {
+  id: number | string;
+  text: string;
+  isProcessed: boolean;
+  createdAt: string;
+  rawCreatedAt: string;
+}
+
+export interface CreateInboxPayload {
+  text: string;
+}
+
+

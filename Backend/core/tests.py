@@ -124,3 +124,55 @@ class AuthenticationAPITests(APITestCase):
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('confirm_password', res.data)
 
+
+class InboxAPITests(APITestCase):
+    def setUp(self):
+        self.user1 = User.objects.create_user(
+            email='user1@lifeos.app',
+            username='user1',
+            password='password123',
+        )
+        self.user2 = User.objects.create_user(
+            email='user2@lifeos.app',
+            username='user2',
+            password='password123',
+        )
+
+    def test_create_and_list_inbox_items(self):
+        self.client.force_authenticate(user=self.user1)
+        res = self.client.post('/api/inbox/', {'text': 'Read atomic habits'})
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(res.data['text'], 'Read atomic habits')
+        self.assertFalse(res.data['is_processed'])
+
+        # List should contain this item
+        list_res = self.client.get('/api/inbox/')
+        self.assertEqual(list_res.status_code, status.HTTP_200_OK)
+        results = list_res.data.get('results', list_res.data)
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['text'], 'Read atomic habits')
+
+    def test_unprocessed_filtering(self):
+        self.client.force_authenticate(user=self.user1)
+        item1 = self.client.post('/api/inbox/', {'text': 'Thought 1'}).data
+        item2 = self.client.post('/api/inbox/', {'text': 'Thought 2'}).data
+
+        # Mark item1 as processed
+        self.client.patch(f"/api/inbox/{item1['id']}/", {'is_processed': True})
+
+        # By default only item2 is returned
+        list_res = self.client.get('/api/inbox/')
+        results = list_res.data.get('results', list_res.data)
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]['id'], item2['id'])
+
+    def test_inbox_user_isolation(self):
+        self.client.force_authenticate(user=self.user1)
+        self.client.post('/api/inbox/', {'text': 'User 1 secret'})
+
+        self.client.force_authenticate(user=self.user2)
+        list_res = self.client.get('/api/inbox/')
+        results = list_res.data.get('results', list_res.data)
+        self.assertEqual(len(results), 0)
+
+

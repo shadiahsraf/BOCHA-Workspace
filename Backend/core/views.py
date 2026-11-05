@@ -3,12 +3,13 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import User
+from .models import User, InboxItem
 from .serializers import (
     UserSerializer,
     CustomTokenObtainPairSerializer,
     RegisterSerializer,
     ChangePasswordSerializer,
+    InboxItemSerializer,
 )
 
 
@@ -50,6 +51,24 @@ class BaseUserScopedViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+
+class InboxItemViewSet(BaseUserScopedViewSet):
+    """
+    CRUD API for user Inbox items.
+    Defaults to returning unprocessed items (is_processed=False).
+    """
+    queryset = InboxItem.objects.all()
+    serializer_class = InboxItemSerializer
+    search_fields = ['text']
+    ordering_fields = ['created_at']
+    ordering = ['-created_at']
+
+    def get_queryset(self):
+        include_processed = self.request.query_params.get('include_processed')
+        if include_processed is not None and include_processed.lower() in ['true', '1']:
+            return self.queryset.filter(user=self.request.user).order_by('-created_at')
+        return self.queryset.filter(user=self.request.user, is_processed=False).order_by('-created_at')
 
 
 class CurrentUserView(generics.RetrieveUpdateAPIView):

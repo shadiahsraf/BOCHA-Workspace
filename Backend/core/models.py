@@ -31,3 +31,20 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.email
+
+
+class InboxItem(models.Model):
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='inbox_items',
+    )
+    text = models.CharField(max_length=500)
+    is_processed = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.user.email} - {self.text[:30]}"
