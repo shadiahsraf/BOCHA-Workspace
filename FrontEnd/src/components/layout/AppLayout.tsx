@@ -1,8 +1,11 @@
+import { useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Sidebar } from '@/components/layout/Sidebar';
 import { Topbar } from '@/components/layout/Topbar';
 import { useLayoutStore } from '@/stores/layoutStore';
+import { useAuthStore } from '@/stores/authStore';
+import { useThemeStore } from '@/stores/themeStore';
 
 export interface AppLayoutProps {
   isMobileSidebarOpen?: boolean;
@@ -12,6 +15,16 @@ export function AppLayout({ isMobileSidebarOpen: mobileOpenProp }: AppLayoutProp
   const storeMobileOpen = useLayoutStore((s) => s.isMobileSidebarOpen);
   const isMobileSidebarOpen = mobileOpenProp !== undefined ? mobileOpenProp : storeMobileOpen;
   const setMobileSidebarOpen = useLayoutStore((s) => s.setMobileSidebarOpen);
+
+  const preferredTheme = useAuthStore((state) => state.user?.preferredTheme);
+  const setTheme = useThemeStore((state) => state.setTheme);
+
+  // Sync authenticated user's preferred theme with the DOM and theme store
+  useEffect(() => {
+    if (preferredTheme) {
+      setTheme(preferredTheme);
+    }
+  }, [preferredTheme, setTheme]);
 
   return (
     <TooltipProvider delayDuration={200}>
