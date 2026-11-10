@@ -91,6 +91,7 @@ export function InboxPage() {
     ? {
         id: 'draft',
         title: convertingTaskItem.text,
+        status: 'todo',
         completed: false,
         dueDate: 'No due date',
         priority: 'medium',

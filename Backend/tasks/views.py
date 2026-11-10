@@ -23,5 +23,5 @@ class TaskViewSet(BaseUserScopedViewSet):
     queryset = Task.objects.select_related('project').all()
     serializer_class = TaskSerializer
     search_fields = ['title', 'project__title']
-    ordering_fields = ['due_date', 'priority', 'completed', 'created_at']
+    ordering_fields = ['due_date', 'priority', 'status', 'completed', 'created_at']
     ordering = ['completed', '-created_at']

@@ -23,9 +23,17 @@ function formatDisplayDate(dateStr: string | null | undefined): string {
 }
 
 function normalizeTask(t: BackendTask): TaskItem {
+  let status: 'todo' | 'in_progress' | 'done' = 'todo';
+  if (t.status === 'in_progress' || t.status === 'done' || t.status === 'todo') {
+    status = t.status;
+  } else if (t.completed) {
+    status = 'done';
+  }
+
   return {
     id: t.id,
     title: t.title,
+    status,
     completed: t.completed,
     dueDate: formatDisplayDate(t.due_date),
     rawDueDate: t.due_date,
@@ -39,6 +47,7 @@ export async function fetchTasks(params?: TaskFilterParams): Promise<TaskItem[]>
   const queryParams: Record<string, string | number | boolean> = {};
 
   if (params?.search) queryParams.search = params.search;
+  if (params?.status) queryParams.status = params.status;
   if (params?.priority && params.priority !== 'all') queryParams.priority = params.priority;
   if (params?.completed !== undefined) queryParams.completed = params.completed;
   if (params?.project) queryParams.project = params.project;

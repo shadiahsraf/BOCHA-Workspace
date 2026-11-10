@@ -5,7 +5,6 @@ import {
   createTask,
   updateTask,
   deleteTask,
-  toggleTaskCompletion,
 } from '@/services/tasksService';
 
 export function useTasks() {
@@ -47,20 +46,55 @@ export function useTasks() {
     const target = tasks.find((t) => t.id === id);
     if (!target) return;
     const nextCompleted = !target.completed;
+    const nextStatus: 'todo' | 'in_progress' | 'done' = nextCompleted ? 'done' : 'todo';
 
     // Optimistic local update
     setTasks((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, completed: nextCompleted } : t))
+      prev.map((t) =>
+        t.id === id ? { ...t, completed: nextCompleted, status: nextStatus } : t
+      )
     );
 
     try {
-      await toggleTaskCompletion(id, nextCompleted);
+      await updateTask(id, { completed: nextCompleted, status: nextStatus });
     } catch (err) {
       console.error('Failed to toggle task:', err);
       // Rollback
       setTasks((prev) =>
-        prev.map((t) => (t.id === id ? { ...t, completed: target.completed } : t))
+        prev.map((t) =>
+          t.id === id ? { ...t, completed: target.completed, status: target.status } : t
+        )
       );
+    }
+  };
+
+  const moveTaskStatus = async (
+    id: number | string,
+    nextStatus: 'todo' | 'in_progress' | 'done'
+  ): Promise<void> => {
+    const target = tasks.find((t) => t.id === id);
+    if (!target || target.status === nextStatus) return;
+    const prevStatus = target.status;
+    const nextCompleted = nextStatus === 'done';
+
+    // Optimistic local update
+    setTasks((prev) =>
+      prev.map((t) =>
+        t.id === id ? { ...t, status: nextStatus, completed: nextCompleted } : t
+      )
+    );
+
+    try {
+      await updateTask(id, { status: nextStatus, completed: nextCompleted });
+    } catch (err) {
+      console.error('Failed to update task status:', err);
+      // Rollback
+      setTasks((prev) =>
+        prev.map((t) =>
+          t.id === id ? { ...t, status: prevStatus, completed: target.completed } : t
+        )
+      );
+      throw err;
     }
   };
 
@@ -97,6 +131,8 @@ export function useTasks() {
     projectFilter,
     setProjectFilter,
     toggleTask,
+    moveTaskStatus,
+    setTasks,
     addTask,
     editTask,
     removeTask,

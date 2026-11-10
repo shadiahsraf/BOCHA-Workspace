@@ -45,6 +45,12 @@ class Task(models.Model):
         ('low', 'Low'),
     ]
 
+    STATUS_CHOICES = [
+        ('todo', 'To Do'),
+        ('in_progress', 'In Progress'),
+        ('done', 'Done'),
+    ]
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -58,6 +64,11 @@ class Task(models.Model):
         related_name='tasks',
     )
     title = models.CharField(max_length=255)
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default='todo',
+    )
     completed = models.BooleanField(default=False)
     due_date = models.DateTimeField(null=True, blank=True)
     priority = models.CharField(
@@ -70,6 +81,16 @@ class Task(models.Model):
 
     class Meta:
         ordering = ['completed', '-created_at']
+
+    def save(self, *args, **kwargs):
+        # Keep status and completed in sync
+        if self.status == 'done':
+            self.completed = True
+        elif self.completed and self.status != 'done':
+            self.status = 'done'
+        elif not self.completed and self.status == 'done':
+            self.status = 'todo'
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.title

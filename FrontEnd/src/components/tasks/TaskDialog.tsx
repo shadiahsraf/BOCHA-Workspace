@@ -17,6 +17,7 @@ export interface TaskDialogProps {
   onClose: () => void;
   task?: TaskItem | null;
   projects?: ProjectItem[];
+  defaultStatus?: 'todo' | 'in_progress' | 'done';
   onSave: (data: CreateTaskPayload) => Promise<void>;
 }
 
@@ -25,11 +26,13 @@ export function TaskDialog({
   onClose,
   task,
   projects = [],
+  defaultStatus = 'todo',
   onSave,
 }: TaskDialogProps) {
   const isEditing = !!task;
 
   const [title, setTitle] = useState('');
+  const [status, setStatus] = useState<'todo' | 'in_progress' | 'done'>('todo');
   const [priority, setPriority] = useState<'urgent' | 'high' | 'medium' | 'low'>('medium');
   const [projectId, setProjectId] = useState<string>('');
   const [dueDate, setDueDate] = useState('');
@@ -39,17 +42,19 @@ export function TaskDialog({
   useEffect(() => {
     if (task) {
       setTitle(task.title);
+      setStatus(task.status || (task.completed ? 'done' : 'todo'));
       setPriority(task.priority);
       setProjectId(task.projectId ? String(task.projectId) : '');
       setDueDate(task.rawDueDate ? task.rawDueDate.slice(0, 10) : '');
     } else {
       setTitle('');
+      setStatus(defaultStatus);
       setPriority('medium');
       setProjectId('');
       setDueDate('');
     }
     setError(null);
-  }, [task, isOpen]);
+  }, [task, isOpen, defaultStatus]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -64,6 +69,7 @@ export function TaskDialog({
     try {
       await onSave({
         title: title.trim(),
+        status,
         priority,
         project: projectId ? Number(projectId) : null,
         due_date: dueDate ? `${dueDate}T12:00:00Z` : null,
@@ -157,19 +163,40 @@ export function TaskDialog({
               </div>
             </div>
 
-            {/* Due Date */}
-            <div className="space-y-1">
-              <label htmlFor="task-date" className="text-xs font-medium text-text-primary block">
-                Due Date
-              </label>
-              <Input
-                id="task-date"
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                className="h-9 text-sm"
-                disabled={isSubmitting}
-              />
+            {/* Status & Due Date */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <label htmlFor="task-status" className="text-xs font-medium text-text-primary block">
+                  Status
+                </label>
+                <select
+                  id="task-status"
+                  value={status}
+                  onChange={(e) =>
+                    setStatus(e.target.value as 'todo' | 'in_progress' | 'done')
+                  }
+                  className="w-full h-9 rounded-lg border border-border bg-surface px-2.5 text-xs text-text-primary focus:outline-none focus:ring-1 focus:ring-brand-rose"
+                  disabled={isSubmitting}
+                >
+                  <option value="todo">To Do</option>
+                  <option value="in_progress">In Progress</option>
+                  <option value="done">Done</option>
+                </select>
+              </div>
+
+              <div className="space-y-1">
+                <label htmlFor="task-date" className="text-xs font-medium text-text-primary block">
+                  Due Date
+                </label>
+                <Input
+                  id="task-date"
+                  type="date"
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
+                  className="h-9 text-sm"
+                  disabled={isSubmitting}
+                />
+              </div>
             </div>
           </div>
 

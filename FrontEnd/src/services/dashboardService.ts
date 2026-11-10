@@ -47,6 +47,7 @@ export async function fetchTasks(): Promise<TaskItem[]> {
   return rawList.map((t) => ({
     id: t.id,
     title: t.title,
+    status: t.status || (t.completed ? 'done' : 'todo'),
     completed: t.completed,
     dueDate: formatDisplayDate(t.due_date),
     priority: t.priority,
@@ -91,6 +92,7 @@ export async function updateTaskCompletion(
   return {
     id: t.id,
     title: t.title,
+    status: t.status || (t.completed ? 'done' : 'todo'),
     completed: t.completed,
     dueDate: formatDisplayDate(t.due_date),
     priority: t.priority,

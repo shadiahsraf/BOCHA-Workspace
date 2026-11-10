@@ -8,6 +8,7 @@ export interface PaginatedResponse<T> {
 export interface BackendTask {
   id: number;
   title: string;
+  status?: 'todo' | 'in_progress' | 'done';
   completed: boolean;
   due_date: string | null;
   priority: 'urgent' | 'high' | 'medium' | 'low';
@@ -43,6 +44,7 @@ export interface BackendNote {
 export interface TaskItem {
   id: number | string;
   title: string;
+  status: 'todo' | 'in_progress' | 'done';
   completed: boolean;
   dueDate: string;
   rawDueDate?: string | null;
@@ -101,6 +103,7 @@ export interface UpdateProjectPayload extends Partial<CreateProjectPayload> {}
 
 export interface CreateTaskPayload {
   title: string;
+  status?: 'todo' | 'in_progress' | 'done';
   priority?: 'urgent' | 'high' | 'medium' | 'low';
   completed?: boolean;
   due_date?: string | null;
@@ -110,6 +113,7 @@ export interface CreateTaskPayload {
 export interface UpdateTaskPayload extends Partial<CreateTaskPayload> {}
 
 export interface TaskFilterParams {
+  status?: 'todo' | 'in_progress' | 'done';
   completed?: boolean;
   priority?: string;
   project?: number | string;
