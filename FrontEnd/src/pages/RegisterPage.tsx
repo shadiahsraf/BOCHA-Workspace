@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import { Logo } from '@/components/ui/Logo';
-import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
+import { GoogleAuthButton } from '@/components/auth/GoogleAuthButton';
 
 export function RegisterPage() {
   const navigate = useNavigate();
@@ -66,25 +66,10 @@ export function RegisterPage() {
     }
   };
 
-  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
-    if (!credentialResponse.credential) {
-      setLocalError('No credential received from Google.');
-      return;
-    }
-    setIsSubmitting(true);
+  const handleGoogleSignUp = async (token: string) => {
     setLocalError(null);
-    try {
-      await loginWithGoogle(credentialResponse.credential);
-      navigate('/', { replace: true });
-    } catch (err: unknown) {
-      setLocalError(err instanceof Error ? err.message : 'Google sign-up failed.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleGoogleError = () => {
-    setLocalError('Google authentication was cancelled or failed.');
+    await loginWithGoogle(token);
+    navigate('/', { replace: true });
   };
 
   const activeError = localError || errorFromStore;
@@ -275,18 +260,13 @@ export function RegisterPage() {
                 </div>
               </div>
 
-              {/* Google OAuth Button */}
-              <div className="w-full flex justify-center">
-                <GoogleLogin
-                  onSuccess={handleGoogleSuccess}
-                  onError={handleGoogleError}
-                  theme="outline"
-                  shape="rectangular"
-                  size="large"
-                  text="signup_with"
-                  width="100%"
-                />
-              </div>
+              {/* Google OAuth Custom Button */}
+              <GoogleAuthButton
+                mode="signup"
+                isLoading={isSubmitting}
+                onSuccess={handleGoogleSignUp}
+                onError={(err) => setLocalError(err)}
+              />
 
               <div className="text-center text-xs text-text-secondary pt-1">
                 Already have an account?{' '}

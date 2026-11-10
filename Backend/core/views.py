@@ -62,22 +62,35 @@ class GoogleLoginView(views.APIView):
         client_id = getattr(settings, 'GOOGLE_CLIENT_ID', '')
         audience = client_id if client_id else None
 
+        idinfo = None
+        # 1. Attempt ID token verification using google-auth
         try:
             idinfo = id_token.verify_oauth2_token(
                 token,
                 google_requests.Request(),
                 audience=audience,
             )
-        except ValueError as e:
-            return Response(
-                {'detail': f'Invalid Google token: {str(e)}'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
-        except Exception as e:
-            return Response(
-                {'detail': f'Google verification failed: {str(e)}'},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+        except Exception:
+            idinfo = None
+
+        # 2. If not verified as an ID token, verify as OAuth2 access_token via Google userinfo
+        if not idinfo:
+            import urllib.request
+            import urllib.error
+            import json
+
+            try:
+                req = urllib.request.Request(
+                    'https://www.googleapis.com/oauth2/v3/userinfo',
+                    headers={'Authorization': f'Bearer {token}'},
+                )
+                with urllib.request.urlopen(req, timeout=10) as resp:
+                    idinfo = json.loads(resp.read().decode('utf-8'))
+            except Exception as e:
+                return Response(
+                    {'detail': f'Invalid Google token: {str(e)}'},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
 
         email = idinfo.get('email')
         if not email:

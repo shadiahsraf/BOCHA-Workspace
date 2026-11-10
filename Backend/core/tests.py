@@ -155,6 +155,24 @@ class AuthenticationAPITests(APITestCase):
         self.assertEqual(res.data['user']['email'], 'googleuser@example.com')
         self.assertTrue(User.objects.filter(email='googleuser@example.com').exists())
 
+    @patch('urllib.request.urlopen')
+    def test_google_login_access_token_success(self, mock_urlopen):
+        import json
+        mock_data = json.dumps({
+            'email': 'oauthuser@example.com',
+            'email_verified': True,
+            'given_name': 'OAuth',
+            'family_name': 'User',
+        }).encode('utf-8')
+        mock_urlopen.return_value.__enter__.return_value.read.return_value = mock_data
+
+        url = reverse('auth-google')
+        res = self.client.post(url, {'token': 'valid-oauth-access-token'})
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertIn('access', res.data)
+        self.assertEqual(res.data['user']['email'], 'oauthuser@example.com')
+        self.assertTrue(User.objects.filter(email='oauthuser@example.com').exists())
+
 
 class InboxAPITests(APITestCase):
     def setUp(self):
