@@ -297,7 +297,7 @@ export function SettingsPage() {
                     <label htmlFor="settings-bio" className="text-sm font-medium text-text-primary">
                       Professional Bio, Skills & Working Style
                     </label>
-                    <span className="text-xs text-text-secondary">Used by LifeOS AI Planner</span>
+                    <span className="text-xs text-text-secondary">Used by BOCHA AI Planner</span>
                   </div>
                   <Textarea
                     id="settings-bio"
@@ -309,7 +309,7 @@ export function SettingsPage() {
                     className="resize-y"
                   />
                   <p className="text-xs text-text-secondary">
-                    The internal LifeOS AI Agent acts as your Planner and Executor, tailoring project breakdowns and schedules around your skills and preferences.
+                    The internal BOCHA AI Agent acts as your Planner and Executor, tailoring project breakdowns and schedules around your skills and preferences.
                   </p>
                 </div>
               </CardContent>

@@ -2,7 +2,7 @@ import type { TranslationSchema } from '../types';
 
 export const ar = {
   common: {
-    appName: 'لايف أو إس',
+    appName: 'BOCHA Workspace',
     tagline: 'منصة الإنتاجية الشخصية بالذكاء الاصطناعي',
     save: 'حفظ',
     cancel: 'إلغاء',

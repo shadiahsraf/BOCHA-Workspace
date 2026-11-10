@@ -1,11 +1,12 @@
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate, Navigate } from 'react-router-dom';
-import { Mail, Lock, User, Sparkles, AlertCircle, ArrowRight } from 'lucide-react';
+import { Mail, Lock, User, AlertCircle, ArrowRight } from 'lucide-react';
 import { useAuthStore } from '@/stores/authStore';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
+import { Logo } from '@/components/ui/Logo';
 
 export function RegisterPage() {
   const navigate = useNavigate();
@@ -70,14 +71,11 @@ export function RegisterPage() {
       <div className="w-full max-w-md space-y-6">
         {/* Brand Header */}
         <div className="text-center space-y-2">
-          <div className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-soft text-text-primary dark:text-primary border border-primary/20 shadow-xs mb-1">
-            <Sparkles className="h-6 w-6" />
+          <div className="flex justify-center mb-3">
+            <Logo size="lg" showText={true} />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight text-text-primary">
-            Create Your Account
-          </h1>
           <p className="text-sm text-text-secondary">
-            Join LifeOS to manage your priorities, projects, and personal notes
+            Join BOCHA Workspace to manage your priorities, projects, and personal notes
           </p>
         </div>
 

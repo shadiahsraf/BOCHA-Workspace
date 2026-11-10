@@ -8,7 +8,7 @@ export function useAgent() {
       id: 'welcome',
       role: 'assistant',
       content:
-        "Hello! I am your LifeOS AI Assistant. I can help manage your tasks, check your project status, capture thoughts to your inbox, or provide a daily executive briefing. What would you like to do?",
+        "Hello! I am your BOCHA AI Assistant. I can help manage your tasks, check your project status, capture thoughts to your inbox, or provide a daily executive briefing. What would you like to do?",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
@@ -52,7 +52,7 @@ export function useAgent() {
         setMessages((prev) => [...prev, assistantMsg]);
       } catch (err: unknown) {
         const message =
-          err instanceof Error ? err.message : 'Failed to reach the LifeOS AI assistant.';
+          err instanceof Error ? err.message : 'Failed to reach the BOCHA AI assistant.';
         setError(message);
         const errorMsg: AgentChatMessage = {
           id: `err-${Date.now()}`,
@@ -90,7 +90,7 @@ export function useAgent() {
         id: 'welcome',
         role: 'assistant',
         content:
-          "Conversation cleared. How can I assist you with your LifeOS workspace today?",
+          "Conversation cleared. How can I assist you with your BOCHA workspace today?",
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       },
     ]);

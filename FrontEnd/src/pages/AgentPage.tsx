@@ -212,7 +212,7 @@ export function AgentPage() {
             </div>
             <Card className="p-3.5 bg-surface text-text-primary border-border shadow-xs flex items-center gap-2 text-xs text-text-secondary">
               <Spinner aria-hidden={true} className="h-3.5 w-3.5 text-primary" />
-              <span>LifeOS AI is reasoning and executing tools...</span>
+              <span>BOCHA AI is reasoning and executing tools...</span>
             </Card>
           </div>
         )}
@@ -278,7 +278,7 @@ export function AgentPage() {
             </DialogTitle>
             <DialogDescription>
               Copy this structured prompt to prime ChatGPT, Claude, Gemini, or DeepSeek with complete
-              knowledge of your current LifeOS projects, tasks, and inbox.
+              knowledge of your current BOCHA projects, tasks, and inbox.
             </DialogDescription>
           </DialogHeader>
 

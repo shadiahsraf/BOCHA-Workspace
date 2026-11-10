@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="roseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C17767"/>
+      <stop offset="100%" stop-color="#9E4D3E"/>
+    </linearGradient>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2A1B14"/>
+      <stop offset="100%" stop-color="#190F0B"/>
+    </linearGradient>
+  </defs>
+  <!-- Background Squircle -->
+  <rect width="64" height="64" rx="18" fill="url(#bgGrad)"/>
+  <rect x="1" y="1" width="62" height="62" rx="17" fill="none" stroke="#C17767" stroke-opacity="0.3" stroke-width="1.5"/>
+  <!-- Abstract B Monogram -->
+  <path fill="url(#roseGrad)" fill-rule="evenodd" clip-rule="evenodd" d="M14 12c0-2.2 1.8-4 4-4h18c6.6 0 12 5.4 12 12 0 4-1.9 7.6-5 9.7 4.2 2.1 7 6.5 7 11.5 0 7.7-6.3 14-14 14H18c-2.2 0-4-1.8-4-4V12zm9 14h9c3.3 0 6-2.7 6-6s-2.7-6-6-6h-9v12zm0 20h10c4.4 0 8-3.6 8-8s-3.6-8-8-8H23v16z"/>
+  <!-- Minimalist Architectural Accent Dot -->
+  <circle cx="43" cy="20" r="3" fill="#F5F2EB"/>
+</svg>

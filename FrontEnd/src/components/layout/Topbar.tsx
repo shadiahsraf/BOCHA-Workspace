@@ -16,7 +16,7 @@ import { useThemeStore } from '@/stores/themeStore';
 import { useLocaleStore } from '@/stores/localeStore';
 import { useLayoutStore } from '@/stores/layoutStore';
 import { useAuthStore } from '@/stores/authStore';
-import { useTranslation } from '@/i18n/useTranslation';
+import { Logo } from '@/components/ui/Logo';
 
 export function Topbar() {
   const navigate = useNavigate();
@@ -27,34 +27,27 @@ export function Topbar() {
   const toggleMobileSidebar = useLayoutStore((s) => s.toggleMobileSidebar);
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
-  const { t } = useTranslation();
 
   const userInitials = user?.username
     ? user.username.slice(0, 2).toUpperCase()
     : user?.email
     ? user.email.slice(0, 2).toUpperCase()
-    : 'LO';
+    : 'BW';
 
   return (
     <header className="h-[60px] min-h-[60px] flex items-center justify-between border-b border-border bg-surface px-4 lg:px-6 z-10 shrink-0">
-      {/* Left side: Mobile menu toggle + Page title / Breadcrumb */}
+      {/* Left side: Mobile menu toggle + Brand Logo */}
       <div className="flex items-center gap-2 sm:gap-3">
         <IconButton
           variant="ghost"
           size="sm"
           onClick={toggleMobileSidebar}
-          className="md:hidden me-1 text-text-secondary hover:text-text-primary"
+          className="md:hidden me-1 text-text-secondary hover:text-text-primary shrink-0"
           aria-label="Toggle navigation menu"
         >
           <Menu className="h-5 w-5" />
         </IconButton>
-        <h1 className="text-sm font-bold text-brand-wood dark:text-brand-beige font-heading tracking-wider">
-          {t('common.appName')}
-        </h1>
-        <span className="hidden md:inline-block text-xs text-text-secondary">/</span>
-        <span className="hidden md:inline-block text-xs text-brand-rose font-medium tracking-wide">
-          Workspace
-        </span>
+        <Logo size="sm" showText={true} />
       </div>
 
       {/* Right side: Quick Search, AI Assistant, User Profile */}

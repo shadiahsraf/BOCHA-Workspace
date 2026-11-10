@@ -1,6 +1,6 @@
 export const en = {
   common: {
-    appName: 'LifeOS',
+    appName: 'BOCHA Workspace',
     tagline: 'AI-Native Personal Productivity Platform',
     save: 'Save',
     cancel: 'Cancel',

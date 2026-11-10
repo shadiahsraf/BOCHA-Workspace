@@ -234,7 +234,7 @@ async def chat_with_agent_async(user: User, message: str, history: Optional[List
     bio_context = f"\nUser Bio / Resume / Working Style:\n{user.bio}\n" if getattr(user, 'bio', None) else ""
 
     system_instruction = (
-        f"You are the LifeOS internal AI. You are a Planner and an Executor for {user.username}. "
+        f"You are the BOCHA Workspace internal AI. You are a Planner and an Executor for {user.username}. "
         f"The user's preferred language is '{user.preferred_language}'. "
         f"{bio_context}"
         "Tailor your plans and advice based on the user's bio/resume. "
