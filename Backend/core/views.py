@@ -4,10 +4,12 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from asgiref.sync import async_to_sync
 from django.conf import settings
+from django.db import models
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 
 from .models import User, InboxItem
+from tasks.models import Task, Project
 from .serializers import (
     UserSerializer,
     CustomTokenObtainPairSerializer,
@@ -228,4 +230,44 @@ class PersonaGeneratorView(views.APIView):
     def get(self, request, *args, **kwargs):
         data = generate_5_pillar_persona(request.user)
         return Response(data, status=status.HTTP_200_OK)
+
+
+class WorkspaceStatsView(views.APIView):
+    """
+    Returns high-level productivity metrics and statistics
+    scoped strictly to the currently authenticated user.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user_tasks = Task.objects.filter(user=request.user)
+        total_tasks = user_tasks.count()
+        completed_tasks = user_tasks.filter(
+            models.Q(status='done') | models.Q(completed=True)
+        ).count()
+        pending_tasks = user_tasks.filter(
+            status__in=['todo', 'in_progress'],
+            completed=False,
+        ).count()
+        in_progress_tasks = user_tasks.filter(
+            status='in_progress',
+            completed=False,
+        ).count()
+        todo_tasks = user_tasks.filter(
+            status='todo',
+            completed=False,
+        ).count()
+        completion_rate = round((completed_tasks / total_tasks * 100), 1) if total_tasks > 0 else 0.0
+        active_projects = Project.objects.filter(user=request.user).count()
+
+        return Response({
+            'total_tasks': total_tasks,
+            'completed_tasks': completed_tasks,
+            'pending_tasks': pending_tasks,
+            'in_progress_tasks': in_progress_tasks,
+            'todo_tasks': todo_tasks,
+            'completion_rate': completion_rate,
+            'active_projects': active_projects,
+        }, status=status.HTTP_200_OK)
+
 

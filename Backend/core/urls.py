@@ -10,6 +10,7 @@ from .views import (
     InboxItemViewSet,
     AgentChatView,
     PersonaGeneratorView,
+    WorkspaceStatsView,
 )
 
 router = DefaultRouter()
@@ -22,6 +23,7 @@ urlpatterns = [
     path('auth/google/', GoogleLoginView.as_view(), name='auth-google'),
     path('users/me/', CurrentUserView.as_view(), name='current-user'),
     path('users/change-password/', ChangePasswordView.as_view(), name='change-password'),
+    path('stats/', WorkspaceStatsView.as_view(), name='workspace-stats'),
     path('agent/chat/', AgentChatView.as_view(), name='agent-chat'),
     path('agent/persona/', PersonaGeneratorView.as_view(), name='agent-persona'),
     path('', include(router.urls)),

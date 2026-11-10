@@ -7,6 +7,7 @@ import type {
   TaskItem,
   ProjectItem,
   NoteItem,
+  WorkspaceStats,
 } from '@/types/api';
 
 function formatDisplayDate(dateStr: string | null | undefined): string {
@@ -99,3 +100,9 @@ export async function updateTaskCompletion(
     project: t.project_title || 'General',
   };
 }
+
+export async function fetchWorkspaceStats(): Promise<WorkspaceStats> {
+  const response = await api.get<WorkspaceStats>('/stats/');
+  return response.data;
+}
+

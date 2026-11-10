@@ -8,6 +8,8 @@ export interface UserProfile {
   id: number | string;
   email: string;
   username: string;
+  firstName?: string;
+  lastName?: string;
   preferredLanguage: 'en' | 'ar';
   preferredTheme: 'light' | 'dark' | 'system';
   bio?: string;
@@ -96,6 +98,8 @@ export const useAuthStore = create<AuthState>()(
             id: rawUser.id,
             email: rawUser.email,
             username: rawUser.username,
+            firstName: rawUser.first_name || rawUser.firstName || '',
+            lastName: rawUser.last_name || rawUser.lastName || '',
             preferredLanguage: rawUser.preferred_language || 'en',
             preferredTheme: rawUser.preferred_theme || 'system',
             bio: rawUser.bio || '',
@@ -131,6 +135,8 @@ export const useAuthStore = create<AuthState>()(
             id: rawUser.id,
             email: rawUser.email,
             username: rawUser.username,
+            firstName: rawUser.first_name || rawUser.firstName || '',
+            lastName: rawUser.last_name || rawUser.lastName || '',
             preferredLanguage: rawUser.preferred_language || 'en',
             preferredTheme: rawUser.preferred_theme || 'system',
             bio: rawUser.bio || '',
@@ -168,6 +174,8 @@ export const useAuthStore = create<AuthState>()(
             id: rawUser.id,
             email: rawUser.email,
             username: rawUser.username,
+            firstName: rawUser.first_name || rawUser.firstName || '',
+            lastName: rawUser.last_name || rawUser.lastName || '',
             preferredLanguage: rawUser.preferred_language || 'en',
             preferredTheme: rawUser.preferred_theme || 'system',
             bio: rawUser.bio || '',

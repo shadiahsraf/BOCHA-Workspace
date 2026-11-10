@@ -7,6 +7,10 @@ export interface AuthResponse {
     id: number | string;
     email: string;
     username: string;
+    first_name?: string;
+    last_name?: string;
+    firstName?: string;
+    lastName?: string;
     preferred_language?: 'en' | 'ar';
     preferred_theme?: 'light' | 'dark' | 'system';
     bio?: string;

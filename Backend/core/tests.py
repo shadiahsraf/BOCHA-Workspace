@@ -265,4 +265,49 @@ class AgentAPITests(APITestCase):
         self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
 
 
+class WorkspaceStatsAPITests(APITestCase):
+    def setUp(self):
+        self.user1 = User.objects.create_user(
+            email='user1@bocha.app',
+            username='user1',
+            first_name='User',
+            password='password123',
+        )
+        self.user2 = User.objects.create_user(
+            email='user2@bocha.app',
+            username='user2',
+            first_name='Other',
+            password='password123',
+        )
+
+    def test_stats_unauthenticated(self):
+        res = self.client.get('/api/stats/')
+        self.assertEqual(res.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_stats_authenticated_calculation_and_isolation(self):
+        from tasks.models import Task, Project
+
+        # Create project for user1
+        p1 = Project.objects.create(user=self.user1, title='P1')
+
+        # Create tasks for user1: 2 done, 1 in_progress, 1 todo => total: 4, rate: 50.0%
+        Task.objects.create(user=self.user1, project=p1, title='T1', status='done', completed=True)
+        Task.objects.create(user=self.user1, project=p1, title='T2', status='done', completed=True)
+        Task.objects.create(user=self.user1, project=p1, title='T3', status='in_progress', completed=False)
+        Task.objects.create(user=self.user1, project=p1, title='T4', status='todo', completed=False)
+
+        # Create tasks for user2: should not affect user1
+        Task.objects.create(user=self.user2, title='U2 Task', status='done', completed=True)
+
+        self.client.force_authenticate(user=self.user1)
+        res = self.client.get('/api/stats/')
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertEqual(res.data['total_tasks'], 4)
+        self.assertEqual(res.data['completed_tasks'], 2)
+        self.assertEqual(res.data['pending_tasks'], 2)
+        self.assertEqual(res.data['completion_rate'], 50.0)
+        self.assertEqual(res.data['active_projects'], 1)
+
+
+
 

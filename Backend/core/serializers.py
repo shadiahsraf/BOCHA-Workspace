@@ -18,6 +18,8 @@ class UserSerializer(serializers.ModelSerializer):
             'id',
             'email',
             'username',
+            'first_name',
+            'last_name',
             'preferred_language',
             'preferred_theme',
             'bio',
@@ -33,6 +35,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
         token = super().get_token(user)
         token['email'] = user.email
         token['username'] = user.username
+        token['first_name'] = user.first_name
+        token['last_name'] = user.last_name
         token['preferred_language'] = user.preferred_language
         token['preferred_theme'] = user.preferred_theme
         token['bio'] = user.bio or ''
@@ -44,6 +48,8 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
             'id': self.user.id,
             'email': self.user.email,
             'username': self.user.username,
+            'first_name': self.user.first_name,
+            'last_name': self.user.last_name,
             'preferred_language': self.user.preferred_language,
             'preferred_theme': self.user.preferred_theme,
             'bio': self.user.bio or '',

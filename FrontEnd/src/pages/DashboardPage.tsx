@@ -1,17 +1,21 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, type Variants } from 'framer-motion';
 import {
   Sparkles,
   CheckSquare,
+  CheckCircle2,
+  Clock,
+  TrendingUp,
   Layers,
   NotebookPen,
-  Clock,
   Plus,
   AlertCircle,
   RefreshCw,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLocaleStore } from '@/stores/localeStore';
+import { useAuthStore } from '@/stores/authStore';
 import { useDashboardData } from '@/hooks/useDashboardData';
 import type { TaskItem, ProjectItem, NoteItem, MetricItem } from '@/types/api';
 import {
@@ -74,9 +78,10 @@ export function DashboardPage({ locale: localeProp }: DashboardPageProps = {}) {
   const navigate = useNavigate();
   const storeLocale = useLocaleStore((s) => s.locale);
   const locale = localeProp ?? storeLocale;
+  const user = useAuthStore((s) => s.user);
   const [aiPrompt, setAiPrompt] = useState('');
 
-  const { tasks, projects, notes, isLoading, error, toggleTask, refetch } =
+  const { tasks, projects, notes, stats, isLoading, error, toggleTask, refetch } =
     useDashboardData();
 
   const now = new Date();
@@ -89,53 +94,87 @@ export function DashboardPage({ locale: localeProp }: DashboardPageProps = {}) {
   }).format(now);
 
   const completedCount = tasks.filter((t) => t.completed).length;
+  const displayName =
+    user?.firstName ||
+    (user?.username ? user.username.charAt(0).toUpperCase() + user.username.slice(1) : 'Shady');
 
-  const metrics: MetricItem[] = [
+  // Stagger animation definitions
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
+      },
+    },
+  };
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 14 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.35, ease: 'easeOut' },
+    },
+  };
+
+  // Productivity Stat Cards (Warm Beige / Dark Wood / Rose Gold Theme)
+  const statCards = [
     {
-      id: 'tasks',
-      label: 'Priority Tasks',
-      value: tasks.length,
-      change: `${completedCount} completed`,
-      trend: 'up',
+      id: 'total-tasks',
+      label: locale === 'ar' ? 'إجمالي المهام' : 'Total Tasks',
+      value: stats ? stats.total_tasks : tasks.length,
+      subtext:
+        stats?.active_projects !== undefined
+          ? `${stats.active_projects} ${locale === 'ar' ? 'مشاريع نشطة' : 'active projects'}`
+          : `${projects.length} ${locale === 'ar' ? 'مشاريع نشطة' : 'active projects'}`,
       icon: CheckSquare,
     },
     {
-      id: 'projects',
-      label: 'Active Projects',
-      value: projects.length,
-      change: `${projects.filter((p) => p.progress >= 70).length} near completion`,
-      trend: 'neutral',
-      icon: Layers,
+      id: 'completed-tasks',
+      label: locale === 'ar' ? 'المهام المنجزة' : 'Completed Tasks',
+      value: stats ? stats.completed_tasks : completedCount,
+      subtext: `${
+        stats ? stats.completion_rate : tasks.length ? Math.round((completedCount / tasks.length) * 100) : 0
+      }% ${locale === 'ar' ? 'نسبة الإنجاز' : 'completion rate'}`,
+      icon: CheckCircle2,
     },
     {
-      id: 'notes',
-      label: 'Notes & Docs',
-      value: notes.length,
-      change: 'Synced from API',
-      trend: 'up',
-      icon: NotebookPen,
+      id: 'pending-tasks',
+      label: locale === 'ar' ? 'المهام المعلقة' : 'Pending Tasks',
+      value: stats ? stats.pending_tasks : tasks.length - completedCount,
+      subtext:
+        stats?.in_progress_tasks !== undefined
+          ? `${stats.in_progress_tasks} ${locale === 'ar' ? 'قيد التنفيذ' : 'in progress'}`
+          : locale === 'ar'
+          ? 'تتطلب الانتباه'
+          : 'Awaiting action',
+      icon: Clock,
     },
     {
-      id: 'ai',
-      label: 'AI Interactions',
-      value: '156',
-      change: '94% helpfulness',
-      trend: 'up',
-      icon: Sparkles,
+      id: 'completion-rate',
+      label: locale === 'ar' ? 'نسبة الإنجاز' : 'Completion Rate',
+      value: `${
+        stats ? stats.completion_rate : tasks.length ? Math.round((completedCount / tasks.length) * 100) : 0
+      }%`,
+      subtext: locale === 'ar' ? 'معدل الإنتاجية الشهري' : 'Monthly productivity',
+      icon: TrendingUp,
     },
   ];
 
   return (
     <div className="flex flex-col gap-6 lg:gap-8 pb-10 max-w-7xl mx-auto">
-      {/* 1. Header Section */}
+      {/* 1. Header Section with Personalized Greeting */}
       <section className="flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row sm:items-baseline sm:justify-between gap-1 border-b border-border pb-4">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-text-primary">
-              {greeting}, Workspace User
+            <h1 className="font-heading text-2xl sm:text-3xl font-bold tracking-tight text-text-primary">
+              {greeting}, {displayName}!
             </h1>
             <p className="text-sm text-text-secondary mt-1">
-              Here is your overview and active focus for today.
+              {locale === 'ar'
+                ? 'إليك نظرة عامة على إنتاجيتك ومسار عملك اليوم.'
+                : 'Here is your productivity overview and active rendering focus for today.'}
             </p>
           </div>
           <span className="text-xs sm:text-sm font-medium text-text-secondary-accessible shrink-0">
@@ -190,48 +229,59 @@ export function DashboardPage({ locale: localeProp }: DashboardPageProps = {}) {
         </div>
       </section>
 
-      {/* 2. KPI Metrics Grid */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {isLoading
-          ? Array.from({ length: 4 }).map((_, i) => (
-              <Card key={`metric-skel-${i}`} className="p-5">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-2 w-3/4">
-                    <Skeleton className="h-3 w-20" />
-                    <Skeleton className="h-7 w-14" />
-                    <Skeleton className="h-3 w-28" />
-                  </div>
-                  <Skeleton className="h-11 w-11 rounded-xl" />
+      {/* 2. Productivity Statistics Grid (Animated Stagger) */}
+      {isLoading ? (
+        <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <Card
+              key={`metric-skel-${i}`}
+              className="p-5 bg-surface border border-border/80 rounded-2xl shadow-xs"
+            >
+              <div className="flex items-center justify-between">
+                <div className="space-y-2 w-3/4">
+                  <Skeleton className="h-3 w-20" />
+                  <Skeleton className="h-8 w-16" />
+                  <Skeleton className="h-3 w-28" />
                 </div>
-              </Card>
-            ))
-          : metrics.map((metric) => {
-              const Icon = metric.icon;
-              return (
-                <Card
-                  key={metric.id}
-                  className="relative overflow-hidden transition-all duration-normal hover:shadow-md hover:-translate-y-0.5 motion-reduce:transform-none"
-                >
-                  <CardContent className="p-5 flex items-center justify-between">
+                <Skeleton className="h-11 w-11 rounded-xl" />
+              </div>
+            </Card>
+          ))}
+        </section>
+      ) : (
+        <motion.section
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+        >
+          {statCards.map((card) => {
+            const Icon = card.icon;
+            return (
+              <motion.div key={card.id} variants={itemVariants}>
+                <Card className="relative overflow-hidden bg-surface border border-border/80 rounded-2xl p-5 shadow-xs hover:shadow-md hover:-translate-y-0.5 hover:border-brand-rose/40 transition-all duration-normal motion-reduce:transform-none">
+                  <div className="flex items-center justify-between gap-4">
                     <div className="space-y-1 text-start">
                       <span className="text-xs font-medium text-text-secondary">
-                        {metric.label}
+                        {card.label}
                       </span>
-                      <div className="text-2xl font-bold text-text-primary tracking-tight">
-                        {metric.value}
+                      <div className="text-2xl sm:text-3xl font-bold font-heading text-text-primary tracking-tight">
+                        {card.value}
                       </div>
                       <span className="text-xs text-text-secondary-accessible block">
-                        {metric.change}
+                        {card.subtext}
                       </span>
                     </div>
-                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary-soft text-text-primary dark:text-primary border border-primary/20">
+                    <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-rose/10 text-brand-rose border border-brand-rose/25">
                       <Icon className="h-5 w-5" />
                     </div>
-                  </CardContent>
+                  </div>
                 </Card>
-              );
-            })}
-      </section>
+              </motion.div>
+            );
+          })}
+        </motion.section>
+      )}
 
       {/* 3. Main Content Grid (Tasks Column + Projects/Notes Column) */}
       <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
