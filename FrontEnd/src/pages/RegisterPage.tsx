@@ -7,10 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Spinner } from '@/components/ui/spinner';
 import { Logo } from '@/components/ui/Logo';
+import { GoogleLogin, type CredentialResponse } from '@react-oauth/google';
 
 export function RegisterPage() {
   const navigate = useNavigate();
   const register = useAuthStore((s) => s.register);
+  const loginWithGoogle = useAuthStore((s) => s.loginWithGoogle);
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const errorFromStore = useAuthStore((s) => s.error);
 
@@ -62,6 +64,27 @@ export function RegisterPage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+    if (!credentialResponse.credential) {
+      setLocalError('No credential received from Google.');
+      return;
+    }
+    setIsSubmitting(true);
+    setLocalError(null);
+    try {
+      await loginWithGoogle(credentialResponse.credential);
+      navigate('/', { replace: true });
+    } catch (err: unknown) {
+      setLocalError(err instanceof Error ? err.message : 'Google sign-up failed.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleGoogleError = () => {
+    setLocalError('Google authentication was cancelled or failed.');
   };
 
   const activeError = localError || errorFromStore;
@@ -240,11 +263,36 @@ export function RegisterPage() {
                 )}
               </Button>
 
+              {/* Visual Divider */}
+              <div className="relative w-full my-1.5">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-border" />
+                </div>
+                <div className="relative flex justify-center text-[11px] uppercase tracking-wider">
+                  <span className="bg-surface px-2.5 text-text-secondary">
+                    Or continue with
+                  </span>
+                </div>
+              </div>
+
+              {/* Google OAuth Button */}
+              <div className="w-full flex justify-center">
+                <GoogleLogin
+                  onSuccess={handleGoogleSuccess}
+                  onError={handleGoogleError}
+                  theme="outline"
+                  shape="rectangular"
+                  size="large"
+                  text="signup_with"
+                  width="100%"
+                />
+              </div>
+
               <div className="text-center text-xs text-text-secondary pt-1">
                 Already have an account?{' '}
                 <Link
                   to="/login"
-                  className="text-primary font-semibold hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded-sm"
+                  className="text-brand-rose font-semibold hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-rose rounded-sm"
                 >
                   Sign in here
                 </Link>

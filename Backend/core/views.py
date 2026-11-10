@@ -3,6 +3,9 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 from asgiref.sync import async_to_sync
+from django.conf import settings
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
 
 from .models import User, InboxItem
 from .serializers import (
@@ -37,6 +40,84 @@ class RegisterView(generics.CreateAPIView):
                 'refresh': str(refresh),
             },
             status=status.HTTP_201_CREATED,
+        )
+
+
+class GoogleLoginView(views.APIView):
+    """
+    Public authentication endpoint for Google OAuth (ID token verification).
+    Verifies the client-provided Google ID token, retrieves or creates the user,
+    and returns SimpleJWT access & refresh tokens along with user metadata.
+    """
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        token = request.data.get('token') or request.data.get('credential')
+        if not token:
+            return Response(
+                {'detail': 'Google token is required.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        client_id = getattr(settings, 'GOOGLE_CLIENT_ID', '')
+        audience = client_id if client_id else None
+
+        try:
+            idinfo = id_token.verify_oauth2_token(
+                token,
+                google_requests.Request(),
+                audience=audience,
+            )
+        except ValueError as e:
+            return Response(
+                {'detail': f'Invalid Google token: {str(e)}'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        except Exception as e:
+            return Response(
+                {'detail': f'Google verification failed: {str(e)}'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        email = idinfo.get('email')
+        if not email:
+            return Response(
+                {'detail': 'Google token did not contain an email address.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        email = email.lower().strip()
+
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            base_username = email.split('@')[0]
+            username = base_username
+            counter = 1
+            while User.objects.filter(username=username).exists():
+                username = f"{base_username}{counter}"
+                counter += 1
+
+            first_name = idinfo.get('given_name', '')
+            last_name = idinfo.get('family_name', '')
+
+            user = User.objects.create(
+                email=email,
+                username=username,
+                first_name=first_name,
+                last_name=last_name,
+            )
+            user.set_unusable_password()
+            user.save()
+
+        refresh = RefreshToken.for_user(user)
+        return Response(
+            {
+                'user': UserSerializer(user).data,
+                'access': str(refresh.access_token),
+                'refresh': str(refresh),
+            },
+            status=status.HTTP_200_OK,
         )
 
 

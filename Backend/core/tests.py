@@ -1,6 +1,7 @@
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
+from unittest.mock import patch
 from core.models import User
 
 
@@ -126,6 +127,33 @@ class AuthenticationAPITests(APITestCase):
         res = self.client.post(reverse('change-password'), payload)
         self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertIn('confirm_password', res.data)
+
+    def test_google_login_missing_token(self):
+        url = reverse('auth-google')
+        res = self.client.post(url, {})
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('token is required', res.data['detail'].lower())
+
+    def test_google_login_invalid_token(self):
+        url = reverse('auth-google')
+        res = self.client.post(url, {'token': 'invalid.jwt.token'})
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @patch('google.oauth2.id_token.verify_oauth2_token')
+    def test_google_login_success_creates_user(self, mock_verify):
+        mock_verify.return_value = {
+            'email': 'googleuser@example.com',
+            'email_verified': True,
+            'given_name': 'Google',
+            'family_name': 'Tester',
+        }
+        url = reverse('auth-google')
+        res = self.client.post(url, {'token': 'valid-mock-token'})
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertIn('access', res.data)
+        self.assertIn('refresh', res.data)
+        self.assertEqual(res.data['user']['email'], 'googleuser@example.com')
+        self.assertTrue(User.objects.filter(email='googleuser@example.com').exists())
 
 
 class InboxAPITests(APITestCase):

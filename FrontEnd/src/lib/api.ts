@@ -46,10 +46,11 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // Do not attempt refresh on auth endpoints (login/refresh/register)
+    // Do not attempt refresh on auth endpoints (login/refresh/register/google)
     const isAuthEndpoint =
       originalRequest?.url?.includes('token/') ||
-      originalRequest?.url?.includes('auth/register/');
+      originalRequest?.url?.includes('auth/register/') ||
+      originalRequest?.url?.includes('auth/google/');
 
     if (error.response?.status === 401 && !originalRequest._retry && !isAuthEndpoint) {
       if (isRefreshing) {

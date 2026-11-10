@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import axios from 'axios';
 import { createValidatedPersistStorage } from './storage/validatedStorage';
+import { googleLogin } from '@/services/authService';
 
 export interface UserProfile {
   id: number | string;
@@ -36,6 +37,7 @@ export interface AuthState extends PersistedAuthState {
   updateUser: (userData: Partial<UserProfile>) => void;
   login: (credentials: { email: string; password: string }) => Promise<void>;
   register: (payload: RegisterPayload) => Promise<void>;
+  loginWithGoogle: (token: string) => Promise<void>;
   logout: () => void;
   refreshTokens: () => Promise<string | null>;
 }
@@ -150,6 +152,46 @@ export const useAuthStore = create<AuthState>()(
               const firstErr = Object.values(data)[0];
               if (Array.isArray(firstErr)) message = String(firstErr[0]);
               else if (typeof firstErr === 'string') message = firstErr;
+            }
+          }
+          set({ isLoading: false, error: message });
+          throw new Error(message);
+        }
+      },
+
+      loginWithGoogle: async (token: string) => {
+        set({ isLoading: true, error: null });
+        try {
+          const data = await googleLogin(token);
+          const rawUser = data.user;
+          const user: UserProfile = {
+            id: rawUser.id,
+            email: rawUser.email,
+            username: rawUser.username,
+            preferredLanguage: rawUser.preferred_language || 'en',
+            preferredTheme: rawUser.preferred_theme || 'system',
+            bio: rawUser.bio || '',
+          };
+
+          set({
+            accessToken: data.access,
+            refreshToken: data.refresh,
+            user,
+            isAuthenticated: true,
+            isLoading: false,
+            error: null,
+          });
+        } catch (err: unknown) {
+          let message = 'Google sign-in failed.';
+          if (axios.isAxiosError(err) && err.response?.data) {
+            const data = err.response.data;
+            if (typeof data === 'object') {
+              if (data.detail) message = String(data.detail);
+              else {
+                const firstErr = Object.values(data)[0];
+                if (Array.isArray(firstErr)) message = String(firstErr[0]);
+                else if (typeof firstErr === 'string') message = firstErr;
+              }
             }
           }
           set({ isLoading: false, error: message });

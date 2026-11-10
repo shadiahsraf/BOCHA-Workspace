@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 import { AppProviders } from '@/app/providers';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
@@ -40,58 +41,63 @@ export function App() {
     }
   }, [preferredLanguage, setLocale]);
 
+  const googleClientId =
+    import.meta.env.VITE_GOOGLE_CLIENT_ID || 'demo-client-id.apps.googleusercontent.com';
+
   return (
-    <AppProviders>
-      <BrowserRouter>
-        <Routes>
-          {/* Public Auth Routes */}
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+    <GoogleOAuthProvider clientId={googleClientId}>
+      <AppProviders>
+        <BrowserRouter>
+          <Routes>
+            {/* Public Auth Routes */}
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
 
-          {/* Protected App Routes */}
-          <Route element={<ProtectedRoute />}>
-            <Route element={<AppLayout />}>
-              <Route path="/" element={<DashboardPage />} />
-              <Route path="/inbox" element={<InboxPage />} />
-              <Route path="/agent" element={<AgentPage />} />
-              <Route path="/projects" element={<ProjectsPage />} />
-              <Route path="/tasks" element={<TasksPage />} />
-              <Route path="/notes" element={<NotesPage />} />
-              <Route path="/calendar" element={<CalendarPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-              <Route path="/showcase" element={<ShowcasePage />} />
+            {/* Protected App Routes */}
+            <Route element={<ProtectedRoute />}>
+              <Route element={<AppLayout />}>
+                <Route path="/" element={<DashboardPage />} />
+                <Route path="/inbox" element={<InboxPage />} />
+                <Route path="/agent" element={<AgentPage />} />
+                <Route path="/projects" element={<ProjectsPage />} />
+                <Route path="/tasks" element={<TasksPage />} />
+                <Route path="/notes" element={<NotesPage />} />
+                <Route path="/calendar" element={<CalendarPage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/showcase" element={<ShowcasePage />} />
+              </Route>
             </Route>
-          </Route>
 
-          {/* Catch-all 404 */}
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      </BrowserRouter>
-      <Toaster
-        position="bottom-right"
-        toastOptions={{
-          style: {
-            background: '#2A1B14',
-            color: '#F5F2EB',
-            borderRadius: '8px',
-            border: '1px solid #3F2B22',
-            fontSize: '13px',
-          },
-          success: {
-            iconTheme: {
-              primary: '#C17767',
-              secondary: '#FFFFFF',
+            {/* Catch-all 404 */}
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </BrowserRouter>
+        <Toaster
+          position="bottom-right"
+          toastOptions={{
+            style: {
+              background: '#2A1B14',
+              color: '#F5F2EB',
+              borderRadius: '8px',
+              border: '1px solid #3F2B22',
+              fontSize: '13px',
             },
-          },
-          error: {
-            iconTheme: {
-              primary: '#CE2C31',
-              secondary: '#FFFFFF',
+            success: {
+              iconTheme: {
+                primary: '#C17767',
+                secondary: '#FFFFFF',
+              },
             },
-          },
-        }}
-      />
-    </AppProviders>
+            error: {
+              iconTheme: {
+                primary: '#CE2C31',
+                secondary: '#FFFFFF',
+              },
+            },
+          }}
+        />
+      </AppProviders>
+    </GoogleOAuthProvider>
   );
 }
 
