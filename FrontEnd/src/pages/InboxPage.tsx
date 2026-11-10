@@ -24,12 +24,13 @@ import type {
 } from '@/types/api';
 import { TaskDialog } from '@/components/tasks/TaskDialog';
 import { NoteDialog } from '@/components/notes/NoteDialog';
-import { Card, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import { EmptyState } from '@/components/ui/EmptyState';
 import { cn } from '@/lib/utils';
 
 export function InboxPage() {
@@ -227,18 +228,11 @@ export function InboxPage() {
           </div>
         ) : items.length === 0 ? (
           /* Empty State: Inbox Zero */
-          <Card className="border border-dashed border-border py-16 text-center bg-surface/50">
-            <CardHeader className="space-y-2">
-              <div className="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-full bg-success-soft text-success mb-1">
-                <CheckCircle2 className="h-6 w-6" />
-              </div>
-              <CardTitle className="text-xl">Inbox Zero</CardTitle>
-              <CardDescription className="max-w-md mx-auto">
-                All your thoughts and tasks are processed. Capture something above whenever
-                inspiration strikes!
-              </CardDescription>
-            </CardHeader>
-          </Card>
+          <EmptyState
+            title="Inbox Zero"
+            description="All your thoughts and tasks are processed. Capture something above whenever inspiration strikes!"
+            icon={CheckCircle2}
+          />
         ) : (
           /* Captured Items Feed */
           items.map((item) => (

@@ -30,6 +30,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { TaskDialog } from '@/components/tasks/TaskDialog';
 import { ConfirmDeleteDialog } from '@/components/common/ConfirmDeleteDialog';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 function getPriorityBadge(priority: TaskItem['priority']) {
   switch (priority) {
@@ -240,25 +241,29 @@ export function TasksPage() {
               ))}
             </div>
           ) : tasks.length === 0 ? (
-            <div className="py-16 text-center text-text-secondary p-8">
-              <CheckSquare className="h-10 w-10 mx-auto mb-3 text-text-secondary/40" />
-              <h3 className="text-sm font-semibold text-text-primary">No tasks found</h3>
-              <p className="text-xs text-text-secondary mt-1 max-w-sm mx-auto">
-                {searchQuery || priorityFilter !== 'all' || statusFilter !== 'all'
-                  ? 'No tasks matched your current filter selection.'
-                  : 'Get started by creating your first task.'}
-              </p>
-              {!searchQuery && priorityFilter === 'all' && statusFilter === 'all' && (
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={handleOpenCreate}
-                  className="mt-4 gap-1.5 text-xs shadow-xs"
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                  <span>Create First Task</span>
-                </Button>
-              )}
+            <div className="p-4 sm:p-6">
+              <EmptyState
+                title="No Tasks Found"
+                description={
+                  searchQuery || priorityFilter !== 'all' || statusFilter !== 'all'
+                    ? 'No tasks matched your current filter selection.'
+                    : 'Get started by creating your first task.'
+                }
+                icon={CheckSquare}
+                actionButton={
+                  !searchQuery && priorityFilter === 'all' && statusFilter === 'all' ? (
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={handleOpenCreate}
+                      className="gap-1.5 text-xs shadow-xs"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                      <span>Create First Task</span>
+                    </Button>
+                  ) : undefined
+                }
+              />
             </div>
           ) : (
             <div className="divide-y divide-border">

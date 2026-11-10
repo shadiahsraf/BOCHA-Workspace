@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import { AppProviders } from '@/app/providers';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
@@ -66,6 +67,30 @@ export function App() {
           <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </BrowserRouter>
+      <Toaster
+        position="bottom-right"
+        toastOptions={{
+          style: {
+            background: '#2A1B14',
+            color: '#F5F2EB',
+            borderRadius: '8px',
+            border: '1px solid #3F2B22',
+            fontSize: '13px',
+          },
+          success: {
+            iconTheme: {
+              primary: '#C17767',
+              secondary: '#FFFFFF',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#CE2C31',
+              secondary: '#FFFFFF',
+            },
+          },
+        }}
+      />
     </AppProviders>
   );
 }

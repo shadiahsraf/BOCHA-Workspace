@@ -63,7 +63,7 @@ export function Sidebar({ collapsed, mobileOpen }: SidebarProps = {}) {
       data-mobile-open={isMobileSidebarOpen}
       className={cn(
         // Base structure
-        'h-screen flex flex-col bg-surface border-e border-border select-none z-50',
+        'h-screen flex flex-col bg-brand-wood text-gray-300 border-e border-brand-wood-light select-none z-50',
         // Desktop positioning & width transition
         'md:static md:z-20 md:shrink-0 md:transition-[width] md:duration-200 md:ease-in-out md:translate-x-0',
         isSidebarCollapsed ? 'md:w-[72px]' : 'md:w-[250px]',
@@ -78,7 +78,7 @@ export function Sidebar({ collapsed, mobileOpen }: SidebarProps = {}) {
       {/* Header (60px) */}
       <div
         className={cn(
-          'h-[60px] min-h-[60px] border-b border-border flex items-center px-4',
+          'h-[60px] min-h-[60px] border-b border-brand-wood-light flex items-center px-4',
           isSidebarCollapsed ? 'max-md:justify-between md:justify-center' : 'justify-between'
         )}
       >
@@ -88,14 +88,14 @@ export function Sidebar({ collapsed, mobileOpen }: SidebarProps = {}) {
             isSidebarCollapsed && 'md:hidden'
           )}
         >
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary text-text-primary dark:text-background font-bold text-sm shadow-xs">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-rose text-white font-bold text-sm shadow-xs">
             <Layers className="h-4 w-4" />
           </div>
           <div className="flex flex-col overflow-hidden">
-            <span className="text-sm font-bold tracking-tight text-text-primary truncate">
+            <span className="text-sm font-bold tracking-tight text-white font-heading truncate">
               LifeOS
             </span>
-            <span className="text-[10px] text-text-secondary truncate">
+            <span className="text-[10px] text-gray-400 truncate">
               Productivity Workspace
             </span>
           </div>
@@ -106,7 +106,7 @@ export function Sidebar({ collapsed, mobileOpen }: SidebarProps = {}) {
           size="sm"
           onClick={handleToggle}
           aria-label={isSidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          className="text-text-secondary hover:text-text-primary"
+          className="text-gray-400 hover:text-white hover:bg-brand-wood-light"
         >
           {isSidebarCollapsed ? (
             <ChevronRight className="h-4 w-4 rtl:rotate-180" />
@@ -132,10 +132,10 @@ export function Sidebar({ collapsed, mobileOpen }: SidebarProps = {}) {
                       onClick={() => setMobileSidebarOpen(false)}
                       className={({ isActive }) =>
                         cn(
-                          'flex items-center gap-3 px-3 py-2 md:px-0 md:justify-center md:h-10 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                          'flex items-center gap-3 px-3 py-2 md:px-0 md:justify-center md:h-10 rounded-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-rose',
                           isActive
-                            ? 'bg-primary-soft text-text-primary dark:text-primary font-medium'
-                            : 'text-text-secondary hover:text-text-primary hover:bg-surface-secondary/80'
+                            ? 'bg-brand-wood-light text-brand-rose font-medium border-s-2 border-brand-rose md:border-s-0 md:border-b-2'
+                            : 'text-gray-300 hover:text-white hover:bg-brand-wood-light/80'
                         )
                       }
                     >
@@ -159,17 +159,17 @@ export function Sidebar({ collapsed, mobileOpen }: SidebarProps = {}) {
                 onClick={() => setMobileSidebarOpen(false)}
                 className={({ isActive }) =>
                   cn(
-                    'flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary',
+                    'flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-rose',
                     isActive
-                      ? 'bg-primary-soft text-text-primary dark:text-primary font-medium'
-                      : 'text-text-secondary hover:text-text-primary hover:bg-surface-secondary/80'
+                      ? 'bg-brand-wood-light text-brand-rose font-medium border-s-2 border-brand-rose'
+                      : 'text-gray-300 hover:text-white hover:bg-brand-wood-light/80'
                   )
                 }
               >
                 <Icon className="h-4 w-4 shrink-0" />
                 <span className="truncate">{item.label}</span>
                 {item.badge && (
-                  <span className="ms-auto px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-surface-secondary text-text-secondary border border-border">
+                  <span className="ms-auto px-1.5 py-0.5 rounded-full text-[10px] font-semibold bg-brand-wood-light text-brand-rose border border-brand-wood-light">
                     {item.badge}
                   </span>
                 )}
@@ -182,13 +182,13 @@ export function Sidebar({ collapsed, mobileOpen }: SidebarProps = {}) {
       {/* Sidebar Footer */}
       <div
         className={cn(
-          'p-3 border-t border-border',
+          'p-3 border-t border-brand-wood-light',
           isSidebarCollapsed && 'md:hidden'
         )}
       >
-        <div className="p-2.5 rounded-lg bg-surface-secondary/40 border border-border text-xs text-text-secondary flex flex-col gap-1">
-          <span className="font-medium text-text-primary">LifeOS v0.1.0</span>
-          <span className="text-[11px] text-text-secondary-accessible">Phase 5 Navigation</span>
+        <div className="p-2.5 rounded-lg bg-brand-wood-light/60 border border-brand-wood-light text-xs text-gray-400 flex flex-col gap-1">
+          <span className="font-medium text-white font-heading">LifeOS v0.1.0</span>
+          <span className="text-[11px] text-gray-400">Minimalist & Premium</span>
         </div>
       </div>
     </aside>

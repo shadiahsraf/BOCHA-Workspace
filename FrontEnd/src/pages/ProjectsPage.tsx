@@ -28,6 +28,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ProjectDialog } from '@/components/projects/ProjectDialog';
 import { ConfirmDeleteDialog } from '@/components/common/ConfirmDeleteDialog';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 export function ProjectsPage() {
   const { projects, isLoading, error, addProject, editProject, removeProject, refetch } =
@@ -197,28 +198,28 @@ export function ProjectsPage() {
             ))}
           </div>
         ) : filteredProjects.length === 0 ? (
-          <div className="py-16 text-center text-text-secondary rounded-2xl border border-dashed border-border bg-surface/50 p-8">
-            <Layers className="h-10 w-10 mx-auto mb-3 text-text-secondary/40" />
-            <h3 className="text-sm font-semibold text-text-primary">
-              {searchQuery ? 'No matching projects found' : 'No projects created yet'}
-            </h3>
-            <p className="text-xs text-text-secondary mt-1 max-w-sm mx-auto">
-              {searchQuery
+          <EmptyState
+            title={searchQuery ? 'No Matching Projects' : 'No Projects Created Yet'}
+            description={
+              searchQuery
                 ? 'Try searching with a different keyword or clear your filter.'
-                : 'Create your first project to organize priorities and track delivery progress.'}
-            </p>
-            {!searchQuery && (
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={handleOpenCreate}
-                className="mt-4 gap-1.5 text-xs shadow-xs"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                <span>Create First Project</span>
-              </Button>
-            )}
-          </div>
+                : 'Create your first project to organize priorities and track delivery progress.'
+            }
+            icon={Layers}
+            actionButton={
+              !searchQuery ? (
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={handleOpenCreate}
+                  className="gap-1.5 text-xs shadow-xs"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  <span>Create First Project</span>
+                </Button>
+              ) : undefined
+            }
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {filteredProjects.map((project) => (

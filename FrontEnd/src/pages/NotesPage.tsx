@@ -26,6 +26,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { NoteDialog } from '@/components/notes/NoteDialog';
 import { ConfirmDeleteDialog } from '@/components/common/ConfirmDeleteDialog';
+import { EmptyState } from '@/components/ui/EmptyState';
 
 export function NotesPage() {
   const {
@@ -185,30 +186,32 @@ export function NotesPage() {
             ))}
           </div>
         ) : filteredNotes.length === 0 ? (
-          <div className="py-16 text-center text-text-secondary rounded-2xl border border-dashed border-border bg-surface/50 p-8">
-            <Notebook className="h-10 w-10 mx-auto mb-3 text-text-secondary/40" />
-            <h3 className="text-sm font-semibold text-text-primary">
-              {searchQuery || selectedCategory !== 'all'
-                ? 'No matching notes found'
-                : 'No notes created yet'}
-            </h3>
-            <p className="text-xs text-text-secondary mt-1 max-w-sm mx-auto">
-              {searchQuery || selectedCategory !== 'all'
+          <EmptyState
+            title={
+              searchQuery || selectedCategory !== 'all'
+                ? 'No Matching Notes'
+                : 'No Notes Created Yet'
+            }
+            description={
+              searchQuery || selectedCategory !== 'all'
                 ? 'Try searching with different terms or selecting another category.'
-                : 'Write your first note to build your personal knowledge base.'}
-            </p>
-            {!searchQuery && selectedCategory === 'all' && (
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={handleOpenCreate}
-                className="mt-4 gap-1.5 text-xs shadow-xs"
-              >
-                <Plus className="h-3.5 w-3.5" />
-                <span>Create First Note</span>
-              </Button>
-            )}
-          </div>
+                : 'Write your first note to build your personal knowledge base.'
+            }
+            icon={Notebook}
+            actionButton={
+              !searchQuery && selectedCategory === 'all' ? (
+                <Button
+                  variant="primary"
+                  size="sm"
+                  onClick={handleOpenCreate}
+                  className="gap-1.5 text-xs shadow-xs"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  <span>Create First Note</span>
+                </Button>
+              ) : undefined
+            }
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {filteredNotes.map((note) => (

@@ -9,12 +9,12 @@ import { Spinner } from '@/components/ui/spinner';
  * Notice: 'relative' is part of the base classes to support absolutely centered loading spinners.
  */
 export const buttonVariants = cva(
-  'relative inline-flex items-center justify-center font-medium transition-colors select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-surface disabled:pointer-events-none disabled:opacity-50',
+  'relative inline-flex items-center justify-center font-medium transition-colors select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-rose focus-visible:ring-offset-2 focus-visible:ring-offset-surface disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
         primary:
-          'bg-primary text-text-primary dark:text-background hover:bg-primary/90 active:bg-primary/95 shadow-sm',
+          'bg-brand-rose hover:bg-brand-rose-hover text-white transition-all duration-300 shadow-sm active:opacity-95',
         secondary:
           'bg-surface-secondary text-text-primary hover:bg-surface-secondary/80 border border-border active:bg-surface-secondary/90',
         outline:

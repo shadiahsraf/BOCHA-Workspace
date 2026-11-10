@@ -33,10 +33,18 @@ const config: Config = {
           DEFAULT: 'rgb(var(--color-warning) / <alpha-value>)',
           soft: 'rgb(var(--color-warning-soft) / <alpha-value>)',
         },
+        // Brand Palette (Modern Minimalist & Premium)
+        'brand-beige': '#F5F2EB',
+        'brand-wood': '#2A1B14',
+        'brand-wood-light': '#3F2B22',
+        'brand-rose': '#C17767',
+        'brand-rose-hover': '#A66052',
       },
       fontFamily: {
         sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
         arabic: ['"IBM Plex Sans Arabic"', 'system-ui', 'sans-serif'],
+        heading: ['"Copperplate Gothic Light"', '"Copperplate"', 'serif'],
+        body: ['Inter', 'sans-serif'],
       },
       fontSize: {
         xs: ['0.75rem', { lineHeight: '1.0rem' }],

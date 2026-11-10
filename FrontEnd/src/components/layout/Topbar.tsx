@@ -48,11 +48,11 @@ export function Topbar() {
         >
           <Menu className="h-5 w-5" />
         </IconButton>
-        <h1 className="text-sm font-semibold text-text-primary tracking-tight">
+        <h1 className="text-sm font-bold text-brand-wood dark:text-brand-beige font-heading tracking-wider">
           {t('common.appName')}
         </h1>
         <span className="hidden md:inline-block text-xs text-text-secondary">/</span>
-        <span className="hidden md:inline-block text-xs text-text-secondary-accessible">
+        <span className="hidden md:inline-block text-xs text-brand-rose font-medium tracking-wide">
           Workspace
         </span>
       </div>
